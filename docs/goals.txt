@@ -1,0 +1,61 @@
+Use cairo to produce a view of the garden, week by week.
+ - will help visualize how much space there is for new plants when old ones are
+   harvested.
+
+Use simple math to produce a calendar of what should be seeded indoors,
+separated indoors, seeded outdoors, transplanted, separated outdoors, and
+harvested, and when that should happen.
+
+Ideal output:
+
+Month and week
+
+ ---------------
+|plot of plants |
+|growing indoors|
+ ---------------
+
+ -----------------
+|plot(s) of plants|
+|growing outdoors |
+ -----------------
+
+Important dates this month:
+To seed indoors:
+ 3/1 - tomatoes - 6 seeds
+
+To separate into bigger pots indoors:
+ 3/14 - tomatoes
+
+To transplant:
+ 3/30 - tomatoes - 4 plants
+
+google calendar would send reminders for *actions*, i.e. seed, separate,
+transplant, harvest.
+
+
+Start simple:
+ - assume I will be gardening during the mid-april through mid-august, where the
+   doubling rate is constant.
+ - assume all plants double in size at the same rate.  Given infinite growing
+   space and time, they would continue to grow.  Ignore winter's growth slack
+   off.
+ - don't take into account "tallness".  Some plants would rather grow upwards
+   than outwards.  Model that as a limit on the horizontal size.
+ - assume only one plot.
+
+Questions:
+ - what is the growth rate under a grow lamp?  Will be constant.  Greater than
+   rate during early spring, but less than rate around, say, mid-april.  Maybe
+   say it's 15 days?
+
+resources:
+	man malloc
+	man fgetc
+	man scanf
+	man fopen
+	man exit
+	argv[1] - http://www.cprogramming.com/tutorial/c/lesson14.html
+	file ops - http://www.cprogramming.com/tutorial/cfileio.html
+	dates - http://bytes.com/topic/c/answers/214791-work-dates
+	butterhead lettuce - http://www.territorialseed.com/product/905/204
