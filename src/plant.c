@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 
 struct plant {
 	/* input */
@@ -114,10 +115,87 @@ struct plant *parse_and_create_plant(FILE *fp)
 		return NULL;
 	if (!strptime(string, "%Y-%m-%d", &new_plant->outdoor_planting_date))
 		return NULL;
+	free(string);
+
+	return new_plant;
+}
+
+int add_days_to_date(struct tm *date, int days)
+{
+	date->tm_mday += days;
+	/* Normalize the date */
+	mktime(date);
+	return 0;
+}
+
+int calculate_plant_dates(struct plant *new_plant)
+{
+	int ret;
+
+	/* Some plants need to be direct sown outdoors,
+	 * rather than started under a sun lamp indoors.
+	 */
+	if (new_plant->num_weeks_indoors) {
+		new_plant->seeding_date = new_plant->outdoor_planting_date;
+		ret = add_days_to_date(&new_plant->seeding_date,
+				-(new_plant->num_weeks_indoors)*7);
+		if (ret)
+			return ret;
+
+		new_plant->sprouting_date = new_plant->seeding_date;
+	} else {
+		new_plant->sprouting_date = new_plant->outdoor_planting_date;
+	}
+	ret = add_days_to_date(&new_plant->seeding_date,
+			new_plant->avg_days_to_sprout);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+void print_sprouting_date(struct plant *new_plant)
+{
+	char string[MAX_NAME_LENGTH];
+
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->sprouting_date);
+	printf("Expect sprouting seeds around: %s\n", string);
+}
+
+void print_action_dates(struct plant *new_plant)
+{
+	char string[MAX_NAME_LENGTH];
+	float num_seeds;
+	char *planting_type;
+	int chars_printed;
+
+	chars_printed = printf("Calendar for %s:\n", new_plant->name);
+	/* Don't count the newline */
+	for(; chars_printed > 1; chars_printed--)
+		putchar('=');
+	printf("\n");
+
+	if (!new_plant->num_weeks_indoors)
+	{
+		planting_type = "Direct sow";
+	} else {
+		strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+				&new_plant->seeding_date);
+		num_seeds = ceil(new_plant->num_plants_to_harvest / (1 - new_plant->germination_rate));
+		printf("Start %i seed%s under grow lamp: %s\n",
+				(int) num_seeds,
+				(num_seeds > 1) ? "s" : "",
+				string);
+		print_sprouting_date(new_plant);
+		planting_type = "Transplant";
+	}
+
 	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
 			&new_plant->outdoor_planting_date);
-	printf("Parsed outdoor planting date: %s\n", string);
-	return new_plant;
+	printf("%s outdoors: %s\n", planting_type, string);
+	if (!new_plant->num_weeks_indoors)
+		print_sprouting_date(new_plant);
 }
 
 int main (int argc, char *argv[])
@@ -137,6 +215,9 @@ int main (int argc, char *argv[])
 	new_plant = parse_and_create_plant(fp);
 	if (!new_plant)
 		return -1;
+	calculate_plant_dates(new_plant);
+	printf("\n");
+	print_action_dates(new_plant);
 
 	return 0;
 }
