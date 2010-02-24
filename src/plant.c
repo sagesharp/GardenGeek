@@ -13,6 +13,7 @@ struct plant {
 	unsigned int	num_weeks_until_indoor_separation;
 	struct tm	outdoor_planting_date;
 	unsigned int	num_weeks_until_outdoor_separation;
+	unsigned int	days_to_harvest;
 	float		germination_rate;
 	unsigned int	avg_days_to_sprout;
 	unsigned int	harvest_removes_plant; /* 0 = false; non-zero = true */
@@ -116,6 +117,21 @@ struct plant *parse_and_create_plant(FILE *fp)
 	if (!strptime(string, "%Y-%m-%d", &new_plant->outdoor_planting_date))
 		return NULL;
 	free(string);
+	
+	fscanf(fp, "%u", &new_plant->num_weeks_until_outdoor_separation);
+	fgetc(fp);
+
+	fscanf(fp, "%u", &new_plant->days_to_harvest);
+	fgetc(fp);
+
+	fscanf(fp, "%f", &new_plant->germination_rate);
+	fgetc(fp);
+
+	fscanf(fp, "%u", &new_plant->avg_days_to_sprout);
+	fgetc(fp);
+
+	fscanf(fp, "%u", &new_plant->harvest_removes_plant);
+	fgetc(fp);
 
 	return new_plant;
 }
@@ -216,12 +232,15 @@ int main (int argc, char *argv[])
 		printf("Bad file.\n");
 		return -1;
 	}
-	new_plant = parse_and_create_plant(fp);
-	if (!new_plant)
-		return -1;
-	calculate_plant_dates(new_plant);
-	printf("\n");
-	print_action_dates(new_plant);
+	while (1) {
+		new_plant = parse_and_create_plant(fp);
+		if (!new_plant)
+			return -1;
+		calculate_plant_dates(new_plant);
+		printf("\n");
+		print_action_dates(new_plant);
+		printf("\n");
+	}
 
 	return 0;
 }
