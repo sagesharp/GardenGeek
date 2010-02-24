@@ -146,7 +146,7 @@ int calculate_plant_dates(struct plant *new_plant)
 	} else {
 		new_plant->sprouting_date = new_plant->outdoor_planting_date;
 	}
-	ret = add_days_to_date(&new_plant->seeding_date,
+	ret = add_days_to_date(&new_plant->sprouting_date,
 			new_plant->avg_days_to_sprout);
 	if (ret)
 		return ret;
