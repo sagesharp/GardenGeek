@@ -1,8 +1,14 @@
 #name,number plants wanted,number of weeks indoors,weeks until separate indoors,date of transplant/seeding outside,weeks until separate outdoors,days to harvest (from seeding),minium germination rate,avg. days to germination,harvest destroys plant?
 # Use ISO 8601 standard date format: %Y-%m-%d.
-#
-butter head lettuce,3,3,2,2010-04-24,0,48,.80,7,y
 # output:
 # actions: transplant 2009-04-24, seed indoors 2009-03-27, sprout 2009-04-03, separate indoors 2009-04-17, harden off 2009-04-21, harvest 2009-06-11
 # indoor garden plot: sprouts appear 2009-04-03, grow until 2009-04-24
 # outdoor garden plot: bigger plants appear 2009-04-24, harvested 2009-06-11
+#
+#butter head lettuce,3,3,2,2010-04-24,0,48,.80,7,1
+oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
+oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
+oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
+oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
+oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
+oregon spring tomatoes,1,7,3,2010-04-24,0,75,.80,10,0
