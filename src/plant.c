@@ -182,7 +182,11 @@ void print_action_dates(struct plant *new_plant)
 	} else {
 		strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
 				&new_plant->seeding_date);
-		num_seeds = ceil(new_plant->num_plants_to_harvest / (1 - new_plant->germination_rate));
+		/*
+		 * num seeds survived = num seeds planted * germination rate
+		 * num seeds survived / germination rate = num seeds planted
+		 */
+		num_seeds = ceil(new_plant->num_plants_to_harvest / new_plant->germination_rate);
 		printf("Start %i seed%s under grow lamp: %s\n",
 				(int) num_seeds,
 				(num_seeds > 1) ? "s" : "",
