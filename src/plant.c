@@ -57,11 +57,10 @@ int skip_comment_lines(FILE *fp)
 		/* Eat the newline */
 		tmp = fgetc(fp);
 	} while (1);
-	printf("# finished do-while loop\n");
 	return 1;
 }
 
-int copy_word_from_file(FILE *fp, char **new_word, const char *description)
+int copy_word_from_file(FILE *fp, char **new_word)
 {
 	char word[MAX_NAME_LENGTH];
 
@@ -70,7 +69,6 @@ int copy_word_from_file(FILE *fp, char **new_word, const char *description)
 	if (!*new_word)
 		return 0;
 	strcpy(*new_word, word);
-	printf("%s: %s\n", description, *new_word);
 	fgetc(fp);
 	return 1;
 }
@@ -91,29 +89,25 @@ struct plant *parse_and_create_plant(FILE *fp)
 		return NULL;
 
 	/* Get the plant name */
-	if (!copy_word_from_file(fp, &new_plant->name, "Plant name"))
+	if (!copy_word_from_file(fp, &new_plant->name))
 		return NULL;
 
 	/* Get the number plants we want to harvest */
 	fscanf(fp, "%u", &new_plant->num_plants_to_harvest);
 	fgetc(fp);
-	printf("Number of plants to harvest: %u\n", new_plant->num_plants_to_harvest);
 
 	/* Get the number of weeks indoors */
 	fscanf(fp, "%u", &new_plant->num_weeks_indoors);
 	fgetc(fp);
-	printf("Number of weeks indoors: %u\n", new_plant->num_weeks_indoors);
 
 	/* Get the number of weeks after sprouting
 	 * that we need to separate the plants.
 	 */
 	fscanf(fp, "%u", &new_plant->num_weeks_until_indoor_separation);
 	fgetc(fp);
-	printf("Number of weeks indoors until separation: %u\n",
-			new_plant->num_weeks_until_indoor_separation);
 
 	/* Convert the outdoor planting date into something we can understand */
-	if (!copy_word_from_file(fp, &string, "Outdoor planting date"))
+	if (!copy_word_from_file(fp, &string))
 		return NULL;
 	if (!strptime(string, "%Y-%m-%d", &new_plant->outdoor_planting_date))
 		return NULL;
