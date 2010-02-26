@@ -85,6 +85,7 @@ struct plant *parse_and_create_plant(FILE *fp)
 		printf("Out of memory\n");
 		return NULL;
 	}
+	memset(new_plant, 0, sizeof(*new_plant));
 
 	if(!skip_comment_lines(fp))
 		return NULL;
