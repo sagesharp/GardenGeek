@@ -5,7 +5,8 @@
 # indoor garden plot: sprouts appear 2009-04-03, grow until 2009-04-24
 # outdoor garden plot: bigger plants appear 2009-04-24, harvested 2009-06-11
 #
-#butter head lettuce,3,3,2,2010-04-24,0,48,.80,7,1
-oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
+butter head lettuce,3,3,2,2010-04-24,0,48,.80,7,1
 oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
 oregon spring tomatoes,1,7,3,2010-04-24,0,75,.80,10,0
+copra storage onions,25,3,2,2010-04-24,0,104,.75,11,0
+copra storage onions,25,0,0,2010-04-24,2,104,.75,11,0
