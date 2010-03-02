@@ -21,11 +21,9 @@ struct plant {
 	/* XXX: These could be an array with an enum. */
 	struct tm	seeding_date;
 	struct tm	sprouting_date;
-	struct tm	separation_date; /* Could be for separating plants into new pots
-				  * after seeding indoors, or thinning plants
-				  * after direct sowing.
-				  */
-	struct tm	harden_off_date;
+	struct tm	indoor_separation_date;
+	struct tm	hardening_off_date;
+	struct tm	outdoor_separation_date;
 	struct tm	harvest_date;
 };
 
@@ -139,6 +137,67 @@ int add_days_to_date(struct tm *date, int days)
 	return 0;
 }
 
+int calculate_indoor_plant_dates(struct plant *new_plant)
+{
+	int ret;
+	unsigned int temp;
+
+	/* Get date to start seeds indoors */
+	new_plant->seeding_date = new_plant->outdoor_planting_date;
+	ret = add_days_to_date(&new_plant->seeding_date,
+			-(new_plant->num_weeks_indoors)*7);
+	if (ret)
+		return ret;
+
+	/* Get date to separate indoor seedlings */
+	if (new_plant->num_weeks_until_indoor_separation) {
+		new_plant->indoor_separation_date =
+			new_plant->seeding_date;
+		temp = new_plant->num_weeks_until_indoor_separation*7;
+		ret = add_days_to_date(
+				&new_plant->indoor_separation_date,
+			       	temp);
+		if (ret)
+			return ret;
+	}
+
+	/* Get date to start hardening off plants (leaving them
+	 * outdoors during the day, bringing them inside at night)
+	 */
+	new_plant->hardening_off_date =
+		new_plant->outdoor_planting_date;
+	ret = add_days_to_date(&new_plant->hardening_off_date, -3);
+	if (ret)
+		return ret;
+
+	/* Set sprouting base date */
+	new_plant->sprouting_date = new_plant->seeding_date;
+	return 0;
+}
+
+int calculate_direct_sown_plant_dates(struct plant *new_plant)
+{
+	int ret;
+	int temp;
+
+	new_plant->seeding_date = new_plant->outdoor_planting_date;
+	
+	new_plant->sprouting_date =
+		new_plant->outdoor_planting_date;
+	
+	if (new_plant->num_weeks_until_outdoor_separation) {
+		new_plant->outdoor_separation_date =
+			new_plant->outdoor_planting_date;
+		temp = new_plant->num_weeks_until_outdoor_separation;
+		ret = add_days_to_date(
+				&new_plant->outdoor_separation_date,
+				temp*7);
+		if (ret)
+			return ret;
+	}
+	return 0;
+}
+
 int calculate_plant_dates(struct plant *new_plant)
 {
 	int ret;
@@ -147,22 +206,29 @@ int calculate_plant_dates(struct plant *new_plant)
 	 * rather than started under a sun lamp indoors.
 	 */
 	if (new_plant->num_weeks_indoors) {
-		new_plant->seeding_date = new_plant->outdoor_planting_date;
-		ret = add_days_to_date(&new_plant->seeding_date,
-				-(new_plant->num_weeks_indoors)*7);
-		if (ret)
-			return ret;
-
-		new_plant->sprouting_date = new_plant->seeding_date;
+		ret = calculate_indoor_plant_dates(new_plant);
 	} else {
-		new_plant->sprouting_date = new_plant->outdoor_planting_date;
+		ret = calculate_direct_sown_plant_dates(new_plant);
 	}
+	if (ret)
+		return ret;
+
 	ret = add_days_to_date(&new_plant->sprouting_date,
 			new_plant->avg_days_to_sprout);
 	if (ret)
 		return ret;
 
 	return 0;
+}
+
+/*
+ * num seeds survived = num seeds planted * germination rate
+ * num seeds survived / germination rate = num seeds planted
+ */
+float get_num_seeds_needed(struct plant *new_plant)
+{
+	return ceil(new_plant->num_plants_to_harvest /
+			new_plant->germination_rate);
 }
 
 void print_sprouting_date(struct plant *new_plant)
@@ -174,11 +240,62 @@ void print_sprouting_date(struct plant *new_plant)
 	printf("Expect sprouting seeds around: %s\n", string);
 }
 
-void print_action_dates(struct plant *new_plant)
+void print_indoor_separation_date(struct plant *new_plant)
+{
+	char string[MAX_NAME_LENGTH];
+
+	if (!new_plant->num_weeks_until_indoor_separation)
+		return;
+
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->indoor_separation_date);
+	printf("Separate or move to a bigger indoor pot: %s\n", string);
+}
+
+void print_hardening_off_date(struct plant *new_plant)
+{
+	char string[MAX_NAME_LENGTH];
+
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->hardening_off_date);
+	printf("Start hardening off seedlings: %s\n", string);
+}
+
+void print_indoor_plant_dates(struct plant *new_plant)
 {
 	char string[MAX_NAME_LENGTH];
 	float num_seeds;
-	char *planting_type;
+
+	num_seeds = get_num_seeds_needed(new_plant);
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->seeding_date);
+	printf("Start %i seed%s under grow lamp: %s\n",
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "",
+			string);
+	print_sprouting_date(new_plant);
+	print_indoor_separation_date(new_plant);
+	print_hardening_off_date(new_plant);
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->outdoor_planting_date);
+	printf("Transplant outdoors: %s\n", string);
+}
+
+void print_direct_sown_plant_dates(struct plant *new_plant)
+{
+	char string[MAX_NAME_LENGTH];
+	float num_seeds;
+
+	num_seeds = get_num_seeds_needed(new_plant);
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->outdoor_planting_date);
+	printf("Direct sow %i seeds outdoors: %s\n",
+			(int) num_seeds, string);
+	print_sprouting_date(new_plant);
+}
+
+void print_action_dates(struct plant *new_plant)
+{
 	int chars_printed;
 
 	chars_printed = printf("Calendar for %s:\n", new_plant->name);
@@ -187,30 +304,11 @@ void print_action_dates(struct plant *new_plant)
 		putchar('=');
 	printf("\n");
 
-	if (!new_plant->num_weeks_indoors)
-	{
-		planting_type = "Direct sow";
-	} else {
-		strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
-				&new_plant->seeding_date);
-		/*
-		 * num seeds survived = num seeds planted * germination rate
-		 * num seeds survived / germination rate = num seeds planted
-		 */
-		num_seeds = ceil(new_plant->num_plants_to_harvest / new_plant->germination_rate);
-		printf("Start %i seed%s under grow lamp: %s\n",
-				(int) num_seeds,
-				(num_seeds > 1) ? "s" : "",
-				string);
-		print_sprouting_date(new_plant);
-		planting_type = "Transplant";
-	}
+	if (new_plant->num_weeks_indoors)
+		print_indoor_plant_dates(new_plant);
+	else
+		print_direct_sown_plant_dates(new_plant);
 
-	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
-			&new_plant->outdoor_planting_date);
-	printf("%s outdoors: %s\n", planting_type, string);
-	if (!new_plant->num_weeks_indoors)
-		print_sprouting_date(new_plant);
 }
 
 int main (int argc, char *argv[])
