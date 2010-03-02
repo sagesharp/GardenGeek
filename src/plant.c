@@ -231,34 +231,13 @@ float get_num_seeds_needed(struct plant *new_plant)
 			new_plant->germination_rate);
 }
 
-void print_sprouting_date(struct plant *new_plant)
+void print_date(char *description, struct tm *date)
 {
 	char string[MAX_NAME_LENGTH];
 
 	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
-			&new_plant->sprouting_date);
-	printf("Expect sprouting seeds around: %s\n", string);
-}
-
-void print_indoor_separation_date(struct plant *new_plant)
-{
-	char string[MAX_NAME_LENGTH];
-
-	if (!new_plant->num_weeks_until_indoor_separation)
-		return;
-
-	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
-			&new_plant->indoor_separation_date);
-	printf("Separate or move to a bigger indoor pot: %s\n", string);
-}
-
-void print_hardening_off_date(struct plant *new_plant)
-{
-	char string[MAX_NAME_LENGTH];
-
-	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
-			&new_plant->hardening_off_date);
-	printf("Start hardening off seedlings: %s\n", string);
+			date);
+	printf("%s: %s\n", description, string);
 }
 
 void print_indoor_plant_dates(struct plant *new_plant)
@@ -273,12 +252,17 @@ void print_indoor_plant_dates(struct plant *new_plant)
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "",
 			string);
-	print_sprouting_date(new_plant);
-	print_indoor_separation_date(new_plant);
-	print_hardening_off_date(new_plant);
-	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+	print_date("Expect sprouting seeds around",
+			&new_plant->sprouting_date);
+
+	if (new_plant->num_weeks_until_indoor_separation)
+		print_date("Separate or move to a bigger indoor pot",
+				&new_plant->indoor_separation_date);
+
+	print_date("Start hardening off seedlings",
+			&new_plant->hardening_off_date);
+	print_date("Transplant outdoors",
 			&new_plant->outdoor_planting_date);
-	printf("Transplant outdoors: %s\n", string);
 }
 
 void print_direct_sown_plant_dates(struct plant *new_plant)
@@ -291,7 +275,8 @@ void print_direct_sown_plant_dates(struct plant *new_plant)
 			&new_plant->outdoor_planting_date);
 	printf("Direct sow %i seeds outdoors: %s\n",
 			(int) num_seeds, string);
-	print_sprouting_date(new_plant);
+	print_date("Expect sprouting seeds around",
+			&new_plant->sprouting_date);
 }
 
 void print_action_dates(struct plant *new_plant)
