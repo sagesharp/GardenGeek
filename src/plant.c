@@ -1,4 +1,4 @@
-#define _XOPEN_SOURCE /* glibc2 needs this */
+#define _XOPEN_SOURCE 500 /* glibc2 needs this */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -25,6 +25,16 @@ struct plant {
 	struct tm	hardening_off_date;
 	struct tm	outdoor_separation_date;
 	struct tm	harvest_date;
+};
+
+struct plant_date {
+	struct tm	*date;
+	char		*blurb;
+};
+
+struct date_list {
+	struct plant_date	*cal_entry;
+	struct date_list	*next;
 };
 
 #define MAX_NAME_LENGTH	500
@@ -230,6 +240,9 @@ int calculate_plant_dates(struct plant *new_plant)
 	return 0;
 }
 
+
+/****************** By plant calendar functions ******************/
+
 /*
  * num seeds survived = num seeds planted * germination rate
  * num seeds survived / germination rate = num seeds planted
@@ -327,10 +340,143 @@ void print_action_dates(struct plant *new_plant)
 
 }
 
+/****************** By month calendar functions ******************/
+
+/* Is this time less than that time? */
+int date_is_less_than(struct tm *this,
+		struct tm *that)
+{
+	time_t this_time;
+	time_t that_time;
+
+	/* Turn both into epoch time */
+	this_time = mktime(this);
+	that_time = mktime(that);
+
+	return this_time < that_time;
+}
+
+int sort_in_one_date(struct plant_date *cal_entry,
+		struct date_list **head_ptr)
+{
+	struct date_list **next_ptr = NULL;
+	struct date_list *new_date;
+
+
+	new_date = malloc(sizeof(*new_date));
+	if (!new_date)
+		return 0;
+	new_date->cal_entry = cal_entry;
+
+	/* This is where C++ operator overloading would be great. */
+	for (next_ptr = head_ptr; *next_ptr != NULL;
+			next_ptr = &(*next_ptr)->next) {
+		/* If the new date is less than the next item in the list,
+		 * insert it before that item in the list.
+		 */
+		if (date_is_less_than(cal_entry->date,
+					(*next_ptr)->cal_entry->date)) {
+			new_date->next = *next_ptr;
+			*next_ptr = new_date;
+			return 1;
+		}
+	}
+	new_date->next = NULL;
+	*next_ptr = new_date;
+	return 1;
+}
+
+struct plant_date *make_calendar_entry(struct tm *date, char *blurb)
+{
+	struct plant_date *cal_entry;
+
+	cal_entry = malloc(sizeof(*cal_entry));
+	if (!cal_entry)
+		return NULL;
+
+	cal_entry->date = date;
+	cal_entry->blurb = blurb;
+	return cal_entry;
+}
+
+/* Organize the dates in the plant into a larger sorted date list */
+int add_indoor_plant_dates_to_list(struct plant *new_plant,
+		struct date_list **head_ptr)
+{
+	char *string;
+	float num_seeds;
+	struct plant_date *cal_entry;
+
+	if (!new_plant->num_weeks_indoors)
+		return 0;
+
+	num_seeds = get_num_seeds_needed(new_plant);
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- start %i seed%s under grow lamp",
+			new_plant->name,
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "");
+	cal_entry = make_calendar_entry(&new_plant->seeding_date, string);
+	if (!cal_entry)
+		return 0;
+
+	if (!sort_in_one_date(cal_entry, head_ptr)) {
+		free(cal_entry);
+		return 0;
+	}
+	return 1;
+}
+
+void print_month_and_year(struct tm *new_date)
+{
+	char string[MAX_NAME_LENGTH];
+	int chars_printed;
+
+	strftime(string, MAX_NAME_LENGTH,
+			"\n%B %Y\n", new_date);
+	chars_printed = printf(string);
+	/* Don't count the newline */
+	for(; chars_printed > 1; chars_printed--)
+		putchar('=');
+	printf("\n");
+}
+
+void print_by_month_calendar(struct date_list *head)
+{
+	int cur_month, cur_year;
+	struct tm *new_date;
+	struct date_list *item;
+	char string[MAX_NAME_LENGTH];
+
+	if (!head)
+		return;
+
+	new_date = head->cal_entry->date;
+	print_month_and_year(new_date);
+	cur_month = new_date->tm_mon;
+	cur_year = new_date->tm_year;
+
+	for (item = head; item != NULL; item = item->next) {
+		new_date = item->cal_entry->date;
+		if (cur_month != new_date->tm_mon ||
+				cur_year != new_date->tm_year) {
+			print_month_and_year(new_date);
+			cur_month = new_date->tm_mon;
+			cur_year = new_date->tm_year;
+		}
+		strftime(string, MAX_NAME_LENGTH, "%e (%a)",
+				new_date);
+		printf("   %s: %s\n", string, item->cal_entry->blurb);
+	}
+}
+
+
 int main (int argc, char *argv[])
 {
 	FILE *fp;
 	struct plant *new_plant;
+	struct date_list *head = NULL;
 
 	if (argc < 2) {
 		printf("Help: plant <file>.\n");
@@ -344,12 +490,15 @@ int main (int argc, char *argv[])
 	while (1) {
 		new_plant = parse_and_create_plant(fp);
 		if (!new_plant)
-			return -1;
+			break;
 		calculate_plant_dates(new_plant);
 		printf("\n");
 		print_action_dates(new_plant);
 		printf("\n");
+		add_indoor_plant_dates_to_list(new_plant,
+				&head);
 	}
+	print_by_month_calendar(head);
 
 	return 0;
 }
