@@ -270,8 +270,14 @@ void print_indoor_plant_dates(struct plant *new_plant)
 
 	print_date("Start hardening off seedlings",
 			&new_plant->hardening_off_date);
-	print_date("Transplant outdoors",
+
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
 			&new_plant->outdoor_planting_date);
+	num_seeds = new_plant->num_plants_to_harvest;
+	printf("Transplant %i plant%s outdoors: %s\n",
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "",
+			string);
 }
 
 void print_direct_sown_plant_dates(struct plant *new_plant)
@@ -286,6 +292,14 @@ void print_direct_sown_plant_dates(struct plant *new_plant)
 			(int) num_seeds, string);
 	print_date("Expect sprouting seeds around",
 			&new_plant->sprouting_date);
+	
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->outdoor_separation_date);
+	num_seeds = new_plant->num_plants_to_harvest;
+	printf("Thin to %i plant%s: %s\n",
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "",
+			string);
 }
 
 void print_action_dates(struct plant *new_plant)
