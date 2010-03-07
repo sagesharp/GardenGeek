@@ -218,6 +218,15 @@ int calculate_plant_dates(struct plant *new_plant)
 	if (ret)
 		return ret;
 
+	/* Harvest date is calculated from the time the seed is in the soil,
+	 * either indoors or outdoors.
+	 */
+	new_plant->harvest_date = new_plant->seeding_date;
+	ret = add_days_to_date(&new_plant->harvest_date,
+			new_plant->days_to_harvest);
+	if (ret)
+		return ret;
+
 	return 0;
 }
 
@@ -282,6 +291,7 @@ void print_direct_sown_plant_dates(struct plant *new_plant)
 void print_action_dates(struct plant *new_plant)
 {
 	int chars_printed;
+	char string[MAX_NAME_LENGTH];
 
 	chars_printed = printf("Calendar for %s:\n", new_plant->name);
 	/* Don't count the newline */
@@ -293,6 +303,13 @@ void print_action_dates(struct plant *new_plant)
 		print_indoor_plant_dates(new_plant);
 	else
 		print_direct_sown_plant_dates(new_plant);
+
+	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+			&new_plant->harvest_date);
+	if (new_plant->harvest_removes_plant)
+		printf("Harvest plants: %s\n", string);
+	else
+		printf("Start harvesting: %s\n", string);
 
 }
 
