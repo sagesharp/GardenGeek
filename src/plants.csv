@@ -5,11 +5,43 @@
 # indoor garden plot: sprouts appear 2009-04-03, grow until 2009-04-24
 # outdoor garden plot: bigger plants appear 2009-04-24, harvested 2009-06-11
 #
-butter head lettuce,3,3,2,2010-04-24,0,48,.80,7,1
-oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,10,0
-oregon spring tomatoes (2nd batch),1,7,3,2010-04-25,0,75,.80,10,0
+yugoslavian red lettuce (1st),3,3,2,2010-04-24,0,48,.80,7,1
+yugoslavian red lettuce (2nd),3,3,2,2010-05-11,0,48,.80,7,1
+yugoslavian red lettuce (3rd),3,0,0,2010-05-11,0,48,.80,7,1
+yugoslavian red lettuce (4th),3,0,0,2010-06-02,0,48,.80,7,1
+st. valery carrots (1st),7,0,0,2010-03-31,3,80,.5,14,1
+st. valery carrots (2nd),7,0,0,2010-04-10,3,80,.5,14,1
+st. valery carrots (3rd),7,0,0,2010-04-24,3,80,.5,14,1
+st. valery carrots (4th),7,0,0,2010-05-08,3,80,.5,14,1
+st. valery carrots (5th),7,0,0,2010-05-22,3,75,.5,14,1
+st. valery carrots (6th),7,0,0,2010-06-05,3,70,.5,14,1
+st. valery carrots (7th),7,0,0,2010-06-26,3,70,.5,14,1
+oregon spring tomatoes (1st),1,7,3,2010-04-13,0,75,.80,10,0
+oregon spring tomatoes (2nd),1,7,3,2010-04-25,0,75,.80,10,0
 isis gold tomatoes,2,7,3,2010-04-25,0,75,.80,10,0
 manitoba tomatoes,2,7,3,2010-04-25,0,75,.80,10,0
 yellow pear tomatoes,2,7,3,2010-04-25,0,75,.80,10,0
+early snowball cauliflower (1st),1,8,3,2010-05-01,0,70,.75,10,1
+early snowball cauliflower (2nd),1,8,3,2010-05-22,0,70,.75,10,1
+early snowball cauliflower (3rd),1,0,0,2010-05-22,3,70,.75,10,1
+early snowball cauliflower (4th),1,0,0,2010-06-12,3,70,.75,10,1
+early snowball cauliflower (ovw 1st),2,0,0,2010-07-10,3,120,.75,10,1
+early snowball cauliflower (ovw 2nd),2,0,0,2010-07-31,3,130,.75,10,1
+early snowball cauliflower (ovw 3rd),2,0,0,2010-08-14,3,140,.75,10,1
+lacinato kale (ovw 1st),2,0,0,2010-07-10,3,80,.75,10,0
+lacinato kale (ovw 2nd),2,0,0,2010-07-31,3,90,.75,10,0
+lacinato kale (ovw 3rd),2,0,0,2010-08-14,3,110,.75,10,0
+lacinato kale (ovw 4th),2,0,0,2010-08-28,3,130,.75,10,0
+lacinato kale (ovw 5th),2,0,0,2010-09-11,3,150,.75,10,0
+lacinato kale (ovw 6th),2,0,0,2010-09-25,3,170,.75,10,0
 copra storage onions,25,3,2,2010-04-24,0,104,.75,11,0
-copra storage onions,25,0,0,2010-04-24,2,104,.75,11,0
+copra storage onions (bulbs),25,0,0,2010-04-24,2,104,.75,11,0
+mongolian giant sunflower (1st),3,0,0,2010-04-24,0,90,.75,12,0
+titian giant sunflower (1st),3,0,0,2010-04-24,0,90,.75,12,0
+mongolian giant sunflower (2nd),3,0,0,2010-05-15,0,90,.75,12,0
+titian giant sunflower (2nd),3,0,0,2010-05-15,0,90,.75,12,0
+mongolian giant sunflower (3rd),3,0,0,2010-06-05,0,90,.75,12,0
+titian giant sunflower (3rd),3,0,0,2010-06-05,0,90,.75,12,0
+brussels sprouts,1,4,0,2010-04-13,0,85,.6,11,1
+brussels sprouts (ovw),2,4,0,2010-07-10,0,160,.6,11,1
+brussels sprouts (ovw),2,4,0,2010-07-24,0,170,.6,11,1
