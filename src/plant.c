@@ -526,6 +526,31 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 	return 1;
 }
 
+int add_harvest_dates_to_list(struct plant *new_plant,
+		struct date_list **head_ptr)
+{
+	char *string;
+	unsigned int num_plants;
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	num_plants = new_plant->num_plants_to_harvest;
+	if (new_plant->harvest_removes_plant)
+		snprintf(string, MAX_NAME_LENGTH,
+				"%s -- Harvest %u plant%s",
+				new_plant->name,
+				num_plants,
+				(num_plants > 1) ? "s": "");
+	else
+		snprintf(string, MAX_NAME_LENGTH,
+				"%s -- Start harvesting",
+				new_plant->name);
+	if (!insert_calendar_entry(&new_plant->harvest_date,
+			       	string, head_ptr))
+		return 0;
+
+	return 1;
+}
+
 void print_month_and_year(struct tm *new_date)
 {
 	char string[MAX_NAME_LENGTH];
@@ -584,6 +609,8 @@ int main (int argc, char *argv[])
 	FILE *fp;
 	struct plant *new_plant;
 	struct date_list *head = NULL;
+	struct date_list *harvest_head = NULL;
+	unsigned int chars_printed;
 
 	if (argc < 2) {
 		printf("Help: plant <file>.\n");
@@ -606,8 +633,20 @@ int main (int argc, char *argv[])
 				&head);
 		add_direct_sown_plant_dates_to_list(new_plant,
 				&head);
+		add_harvest_dates_to_list(new_plant,
+				&harvest_head);
 	}
+	chars_printed = printf("\n\nSeedling By-Month Calendar\n");
+	for(; chars_printed > 3; chars_printed--)
+		putchar('*');
+	printf("\n");
 	print_by_month_calendar(head);
+	
+	chars_printed = printf("\n\nHarvest Calendar\n");
+	for(; chars_printed > 3; chars_printed--)
+		putchar('*');
+	printf("\n");
+	print_by_month_calendar(harvest_head);
 
 	return 0;
 }
