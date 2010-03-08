@@ -411,13 +411,26 @@ struct plant_date *make_calendar_entry(struct tm *date, char *blurb)
 	return cal_entry;
 }
 
+int insert_calendar_entry(struct tm *date, char *string,
+		struct date_list **head_ptr)
+{
+	struct plant_date *cal_entry;
+
+	cal_entry = make_calendar_entry(date, string);
+	if (!cal_entry)
+		return 0;
+
+	if (!sort_in_one_date(cal_entry, head_ptr))
+		return 0;
+	return 1;
+}
+
 /* Organize the dates in the plant into a larger sorted date list */
 int add_indoor_plant_dates_to_list(struct plant *new_plant,
 		struct date_list **head_ptr)
 {
 	char *string;
 	float num_seeds;
-	struct plant_date *cal_entry;
 
 	if (!new_plant->num_weeks_indoors)
 		return 0;
@@ -425,28 +438,90 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 	num_seeds = get_num_seeds_needed(new_plant);
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
 	snprintf(string, MAX_NAME_LENGTH,
-			"%s -- start %i seed%s under grow lamp",
+			"%s -- Start %i seed%s under grow lamp",
 			new_plant->name,
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "");
-	cal_entry = make_calendar_entry(&new_plant->seeding_date,
-			string);
-	if (!cal_entry)
-		return 0;
-
-	if (!sort_in_one_date(cal_entry, head_ptr))
+	if (!insert_calendar_entry(&new_plant->seeding_date,
+				string, head_ptr))
 		return 0;
 
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
 	snprintf(string, MAX_NAME_LENGTH,
 			"%s -- Expect sprouting seeds around",
 			new_plant->name);
-	cal_entry = make_calendar_entry(&new_plant->sprouting_date,
-			string);
-	if (!cal_entry)
+	if (!insert_calendar_entry(&new_plant->sprouting_date,
+			       	string, head_ptr))
 		return 0;
 
-	if (!sort_in_one_date(cal_entry, head_ptr))
+	if (new_plant->num_weeks_until_indoor_separation) {
+		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		snprintf(string, MAX_NAME_LENGTH,
+				"%s -- Separate or move to a bigger indoor pot",
+				new_plant->name);
+		if (!insert_calendar_entry(&new_plant->indoor_separation_date,
+					string, head_ptr))
+			return 0;
+	}
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Start hardening off seedlings",
+			new_plant->name);
+	if (!insert_calendar_entry(&new_plant->hardening_off_date,
+			       	string, head_ptr))
+		return 0;
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	num_seeds = new_plant->num_plants_to_harvest;
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Transplant %i plant%s outdoors",
+			new_plant->name,
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "");
+	if (!insert_calendar_entry(&new_plant->outdoor_planting_date,
+			       	string, head_ptr))
+		return 0;
+	return 1;
+}
+
+int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
+		struct date_list **head_ptr)
+{
+	char *string;
+	float num_seeds;
+
+	if (new_plant->num_weeks_indoors)
+		return 0;
+
+	num_seeds = get_num_seeds_needed(new_plant);
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Direct sow %i seed%s outdoors",
+			new_plant->name,
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "");
+	if (!insert_calendar_entry(&new_plant->outdoor_planting_date,
+				string, head_ptr))
+		return 0;
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Expect sprouting seeds around",
+			new_plant->name);
+	if (!insert_calendar_entry(&new_plant->sprouting_date,
+			       	string, head_ptr))
+		return 0;
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	num_seeds = new_plant->num_plants_to_harvest;
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Thin to %i plant%s",
+			new_plant->name,
+			(int) num_seeds,
+			(num_seeds > 1) ? "s" : "");
+	if (!insert_calendar_entry(&new_plant->outdoor_separation_date,
+			       	string, head_ptr))
 		return 0;
 	return 1;
 }
@@ -528,6 +603,8 @@ int main (int argc, char *argv[])
 		print_action_dates(new_plant);
 		printf("\n");
 		add_indoor_plant_dates_to_list(new_plant,
+				&head);
+		add_direct_sown_plant_dates_to_list(new_plant,
 				&head);
 	}
 	print_by_month_calendar(head);
