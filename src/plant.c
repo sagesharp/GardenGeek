@@ -356,6 +356,18 @@ int date_is_less_than(struct tm *this,
 	return this_time < that_time;
 }
 
+int dates_are_equal(struct tm *this, struct tm *that)
+{
+	time_t this_time;
+	time_t that_time;
+
+	/* Turn both into epoch time */
+	this_time = mktime(this);
+	that_time = mktime(that);
+
+	return this_time == that_time;
+}
+
 int sort_in_one_date(struct plant_date *cal_entry,
 		struct date_list **head_ptr)
 {
@@ -456,6 +468,7 @@ void print_month_and_year(struct tm *new_date)
 void print_by_month_calendar(struct date_list *head)
 {
 	int cur_month, cur_year;
+	struct tm *old_date = NULL;
 	struct tm *new_date;
 	struct date_list *item;
 	char string[MAX_NAME_LENGTH];
@@ -472,13 +485,21 @@ void print_by_month_calendar(struct date_list *head)
 		new_date = item->cal_entry->date;
 		if (cur_month != new_date->tm_mon ||
 				cur_year != new_date->tm_year) {
+			printf("\n");
 			print_month_and_year(new_date);
 			cur_month = new_date->tm_mon;
 			cur_year = new_date->tm_year;
 		}
 		strftime(string, MAX_NAME_LENGTH, "%e (%a)",
 				new_date);
-		printf("   %s: %s\n", string, item->cal_entry->blurb);
+		if (old_date == NULL ||
+				!dates_are_equal(old_date, new_date))
+			printf("\n   %s: %s\n", string,
+					item->cal_entry->blurb);
+		else
+			printf("             %s\n",
+					item->cal_entry->blurb);
+		old_date = new_date;
 	}
 }
 
