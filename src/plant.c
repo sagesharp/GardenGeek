@@ -603,6 +603,9 @@ void print_by_month_calendar(struct date_list *head)
 	}
 }
 
+#define	BY_PLANT	(1 << 0)
+#define	BY_MONTH	(1 << 1)
+#define	BY_HARVEST	(1 << 2)
 
 int main (int argc, char *argv[])
 {
@@ -611,9 +614,15 @@ int main (int argc, char *argv[])
 	struct date_list *head = NULL;
 	struct date_list *harvest_head = NULL;
 	unsigned int chars_printed;
+	unsigned int calendar_bitmask = 0;
+	int i;
 
 	if (argc < 2) {
-		printf("Help: plant <file>.\n");
+		printf("Help: plant <file> [output type]...\n");
+		printf("Where [output type] can be:\n");
+		printf("  p for a by-plant calendar\n");
+		printf("  m for a by-month calendar\n");
+		printf("  h for a harvest calendar\n");
 		return -1;
 	}
 	fp = fopen(argv[1], "r");
@@ -621,14 +630,26 @@ int main (int argc, char *argv[])
 		printf("Bad file.\n");
 		return -1;
 	}
+
+	for (i = 2; i < (2+3) && i < argc; i++) {
+		if (!strcmp(argv[i], "p"))
+			calendar_bitmask |= BY_PLANT;
+		if (!strcmp(argv[i], "m"))
+			calendar_bitmask |= BY_MONTH;
+		if (!strcmp(argv[i], "h"))
+			calendar_bitmask |= BY_HARVEST;
+	}
+
 	while (1) {
 		new_plant = parse_and_create_plant(fp);
 		if (!new_plant)
 			break;
 		calculate_plant_dates(new_plant);
-		printf("\n");
-		print_action_dates(new_plant);
-		printf("\n");
+		if (calendar_bitmask & BY_PLANT) {
+			printf("\n");
+			print_action_dates(new_plant);
+			printf("\n");
+		}
 		add_indoor_plant_dates_to_list(new_plant,
 				&head);
 		add_direct_sown_plant_dates_to_list(new_plant,
@@ -636,17 +657,22 @@ int main (int argc, char *argv[])
 		add_harvest_dates_to_list(new_plant,
 				&harvest_head);
 	}
-	chars_printed = printf("\n\nSeedling By-Month Calendar\n");
-	for(; chars_printed > 3; chars_printed--)
-		putchar('*');
-	printf("\n");
-	print_by_month_calendar(head);
-	
-	chars_printed = printf("\n\nHarvest Calendar\n");
-	for(; chars_printed > 3; chars_printed--)
-		putchar('*');
-	printf("\n");
-	print_by_month_calendar(harvest_head);
+
+	if (calendar_bitmask & BY_MONTH) {
+		chars_printed = printf("\n\nSeedling By-Month Calendar\n");
+		for(; chars_printed > 3; chars_printed--)
+			putchar('*');
+		printf("\n");
+		print_by_month_calendar(head);
+	}
+
+	if (calendar_bitmask & BY_HARVEST) {
+		chars_printed = printf("\n\nHarvest Calendar\n");
+		for(; chars_printed > 3; chars_printed--)
+			putchar('*');
+		printf("\n");
+		print_by_month_calendar(harvest_head);
+	}
 
 	return 0;
 }
