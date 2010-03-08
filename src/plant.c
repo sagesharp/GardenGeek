@@ -417,14 +417,25 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 			new_plant->name,
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "");
-	cal_entry = make_calendar_entry(&new_plant->seeding_date, string);
+	cal_entry = make_calendar_entry(&new_plant->seeding_date,
+			string);
 	if (!cal_entry)
 		return 0;
 
-	if (!sort_in_one_date(cal_entry, head_ptr)) {
-		free(cal_entry);
+	if (!sort_in_one_date(cal_entry, head_ptr))
 		return 0;
-	}
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Expect sprouting seeds around",
+			new_plant->name);
+	cal_entry = make_calendar_entry(&new_plant->sprouting_date,
+			string);
+	if (!cal_entry)
+		return 0;
+
+	if (!sort_in_one_date(cal_entry, head_ptr))
+		return 0;
 	return 1;
 }
 
