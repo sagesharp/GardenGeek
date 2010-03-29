@@ -33,6 +33,11 @@ To transplant:
 google calendar would send reminders for *actions*, i.e. seed, separate,
 transplant, harvest.
 
+ical format thoughts:
+ - Need a time zone section - use PDT for now, ask user later
+ - descriptions need to be sanitized - ical can't handle commas, for example.
+ - dates are in YMD'T'HMS format
+
 
 Start simple:
  - assume I will be gardening during the mid-april through mid-august, where the
@@ -59,3 +64,26 @@ resources:
 	file ops - http://www.cprogramming.com/tutorial/cfileio.html
 	dates - http://bytes.com/topic/c/answers/214791-work-dates
 	butterhead lettuce - http://www.territorialseed.com/product/905/204
+
+
+
+Soil temperature monitoring
+---------------------------
+
+Use agricultural gov. data to get current soil temperature.
+http://www.usbr.gov/pn/agrimet/dayfiles/araoday.txt
+Aurora is 20 miles south of Portland.  ZA is the soil temperature 2" down.
+http://www.usbr.gov/pn/agrimet/wxdata.html
+
+Goals:
+ - Monitor temperature, send SMS/twitter message when it's time to plant
+   specific seeds.
+
+
+Frost warnings
+--------------
+ - Send SMS/email/twitter the night before a frost (when low is less than 34
+   degrees F).
+
+ - http://www.nws.noaa.gov/xml/
+ - http://www.w3schools.com/SOAP/soap_intro.asp
