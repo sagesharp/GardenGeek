@@ -429,13 +429,24 @@ int insert_calendar_entry(struct tm *date, char *string,
 
 /* Organize the dates in the plant into a larger sorted date list */
 int add_indoor_plant_dates_to_list(struct plant *new_plant,
-		struct date_list **head_ptr)
+		struct date_list **head_ptr, int suppress_sprouting_dates)
 {
 	char *string;
 	float num_seeds;
 
 	if (!new_plant->num_weeks_indoors)
 		return 0;
+
+	if (!suppress_sprouting_dates) {
+		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		snprintf(string, MAX_NAME_LENGTH,
+				"%s -- Expect sprouting seeds around",
+				new_plant->name);
+		if (!insert_calendar_entry(&new_plant->sprouting_date,
+					string, head_ptr))
+			return 0;
+		return 1;
+	}
 
 	num_seeds = get_num_seeds_needed(new_plant);
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
@@ -446,14 +457,6 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 			(num_seeds > 1) ? "s" : "");
 	if (!insert_calendar_entry(&new_plant->seeding_date,
 				string, head_ptr))
-		return 0;
-
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	snprintf(string, MAX_NAME_LENGTH,
-			"%s -- Expect sprouting seeds around",
-			new_plant->name);
-	if (!insert_calendar_entry(&new_plant->sprouting_date,
-			       	string, head_ptr))
 		return 0;
 
 	if (new_plant->num_weeks_until_indoor_separation) {
@@ -488,13 +491,24 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 }
 
 int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
-		struct date_list **head_ptr)
+		struct date_list **head_ptr, int suppress_sprouting_dates)
 {
 	char *string;
 	float num_seeds;
 
 	if (new_plant->num_weeks_indoors)
 		return 0;
+
+	if (!suppress_sprouting_dates) {
+		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		snprintf(string, MAX_NAME_LENGTH,
+				"%s -- Expect sprouting seeds around",
+				new_plant->name);
+		if (!insert_calendar_entry(&new_plant->sprouting_date,
+					string, head_ptr))
+			return 0;
+		return 1;
+	}
 
 	num_seeds = get_num_seeds_needed(new_plant);
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
@@ -505,14 +519,6 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 			(num_seeds > 1) ? "s" : "");
 	if (!insert_calendar_entry(&new_plant->outdoor_planting_date,
 				string, head_ptr))
-		return 0;
-
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	snprintf(string, MAX_NAME_LENGTH,
-			"%s -- Expect sprouting seeds around",
-			new_plant->name);
-	if (!insert_calendar_entry(&new_plant->sprouting_date,
-			       	string, head_ptr))
 		return 0;
 
 	if (new_plant->num_weeks_until_outdoor_separation) {
@@ -610,23 +616,26 @@ void print_by_month_calendar(struct date_list *head)
 #define	BY_PLANT	(1 << 0)
 #define	BY_MONTH	(1 << 1)
 #define	BY_HARVEST	(1 << 2)
+#define	BY_SPROUTING	(1 << 3)
 
 int main (int argc, char *argv[])
 {
 	FILE *fp;
 	struct plant *new_plant;
-	struct date_list *head = NULL;
-	struct date_list *harvest_head = NULL;
+	struct date_list *sprouting_list_head = NULL;
+	struct date_list *action_list_head = NULL;
+	struct date_list *harvest_list_head = NULL;
 	unsigned int chars_printed;
 	unsigned int calendar_bitmask = 0;
 	int i;
 
 	if (argc < 2) {
-		printf("Help: plant <file> [output type]...\n");
+		printf("Help: plant <file> [output type] [options]...\n");
 		printf("Where [output type] can be:\n");
 		printf("  p for a by-plant calendar\n");
 		printf("  m for a by-month calendar\n");
 		printf("  h for a harvest calendar\n");
+		printf("  s for a seed sprouting calendar\n");
 		return -1;
 	}
 	fp = fopen(argv[1], "r");
@@ -635,13 +644,19 @@ int main (int argc, char *argv[])
 		return -1;
 	}
 
-	for (i = 2; i < (2+3) && i < argc; i++) {
-		if (!strcmp(argv[i], "p"))
+	for (i = 2; i < (2+4) && i < argc; i++) {
+		if (!strcmp(argv[i], "p") ||
+				!strcmp(argv[i], "-p"))
 			calendar_bitmask |= BY_PLANT;
-		if (!strcmp(argv[i], "m"))
+		if (!strcmp(argv[i], "m") ||
+				!strcmp(argv[i], "-m"))
 			calendar_bitmask |= BY_MONTH;
-		if (!strcmp(argv[i], "h"))
+		if (!strcmp(argv[i], "h") ||
+				!strcmp(argv[i], "-h"))
 			calendar_bitmask |= BY_HARVEST;
+		if (!strcmp(argv[i], "s") ||
+				!strcmp(argv[i], "-s"))
+			calendar_bitmask |= BY_SPROUTING;
 	}
 
 	while (1) {
@@ -654,20 +669,38 @@ int main (int argc, char *argv[])
 			print_action_dates(new_plant);
 			printf("\n");
 		}
-		add_indoor_plant_dates_to_list(new_plant,
-				&head);
-		add_direct_sown_plant_dates_to_list(new_plant,
-				&head);
-		add_harvest_dates_to_list(new_plant,
-				&harvest_head);
+		if (calendar_bitmask & BY_MONTH) {
+			add_indoor_plant_dates_to_list(new_plant,
+					&action_list_head, 1);
+			add_direct_sown_plant_dates_to_list(new_plant,
+					&action_list_head, 1);
+		}
+		if (calendar_bitmask & BY_SPROUTING) {
+			add_indoor_plant_dates_to_list(new_plant,
+					&sprouting_list_head, 0);
+			add_direct_sown_plant_dates_to_list(new_plant,
+					&sprouting_list_head, 0);
+		}
+		if (calendar_bitmask & BY_HARVEST) {
+			add_harvest_dates_to_list(new_plant,
+					&harvest_list_head);
+		}
 	}
 
 	if (calendar_bitmask & BY_MONTH) {
-		chars_printed = printf("\n\nSeedling By-Month Calendar\n");
+		chars_printed = printf("\n\nGarden Action Items Calendar\n");
 		for(; chars_printed > 3; chars_printed--)
 			putchar('*');
 		printf("\n");
-		print_by_month_calendar(head);
+		print_by_month_calendar(action_list_head);
+	}
+	
+	if (calendar_bitmask & BY_SPROUTING) {
+		chars_printed = printf("\n\nSeed Sprouting Calendar\n");
+		for(; chars_printed > 3; chars_printed--)
+			putchar('*');
+		printf("\n");
+		print_by_month_calendar(sprouting_list_head);
 	}
 
 	if (calendar_bitmask & BY_HARVEST) {
@@ -675,7 +708,7 @@ int main (int argc, char *argv[])
 		for(; chars_printed > 3; chars_printed--)
 			putchar('*');
 		printf("\n");
-		print_by_month_calendar(harvest_head);
+		print_by_month_calendar(harvest_list_head);
 	}
 
 	return 0;
