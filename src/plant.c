@@ -306,13 +306,15 @@ void print_direct_sown_plant_dates(struct plant *new_plant)
 	print_date("Expect sprouting seeds around",
 			&new_plant->sprouting_date);
 	
-	strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
-			&new_plant->outdoor_separation_date);
-	num_seeds = new_plant->num_plants_to_harvest;
-	printf("Thin to %i plant%s: %s\n",
+	if (new_plant->num_weeks_until_outdoor_separation) {
+		strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
+				&new_plant->outdoor_separation_date);
+		num_seeds = new_plant->num_plants_to_harvest;
+		printf("Thin to %i plant%s: %s\n",
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "",
 			string);
+	}
 }
 
 void print_action_dates(struct plant *new_plant)
@@ -513,16 +515,18 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 			       	string, head_ptr))
 		return 0;
 
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	num_seeds = new_plant->num_plants_to_harvest;
-	snprintf(string, MAX_NAME_LENGTH,
-			"%s -- Thin to %i plant%s",
-			new_plant->name,
-			(int) num_seeds,
-			(num_seeds > 1) ? "s" : "");
-	if (!insert_calendar_entry(&new_plant->outdoor_separation_date,
-			       	string, head_ptr))
-		return 0;
+	if (new_plant->num_weeks_until_outdoor_separation) {
+		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		num_seeds = new_plant->num_plants_to_harvest;
+		snprintf(string, MAX_NAME_LENGTH,
+				"%s -- Thin to %i plant%s",
+				new_plant->name,
+				(int) num_seeds,
+				(num_seeds > 1) ? "s" : "");
+		if (!insert_calendar_entry(&new_plant->outdoor_separation_date,
+					string, head_ptr))
+			return 0;
+	}
 	return 1;
 }
 
