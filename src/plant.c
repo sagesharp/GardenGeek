@@ -575,6 +575,72 @@ void print_month_and_year(struct tm *new_date)
 	printf("\n");
 }
 
+void make_icalendar(struct date_list *head)
+{
+	struct tm *old_date = NULL;
+	struct tm *new_date;
+	struct tm *now;
+	time_t now_time;
+	struct date_list *item;
+	char start_date[MAX_NAME_LENGTH];
+	char end_date[MAX_NAME_LENGTH];
+	char now_date[MAX_NAME_LENGTH];
+	int num_similar_dates = 0;
+
+	if (!head)
+		return;
+	
+	/* Standard ical stuff */ 
+	printf("BEGIN:VCALENDAR\n");
+	printf("PRODID:-//Sarah Sharp//Garden Calendar Tool v0.1//EN\n");
+	/* Following RFC at http://www.ietf.org/rfc/rfc2445.txt */
+	printf("VERSION:2.0\n");
+
+	for (item = head; item != NULL; item = item->next) {
+		new_date = item->cal_entry->date;
+		if (old_date == NULL ||
+				!dates_are_equal(old_date, new_date)) {
+			if (old_date != NULL) {
+				printf("\nEND:VEVENT\n");
+			}
+			printf("BEGIN:VEVENT\n");
+
+			strftime(start_date, MAX_NAME_LENGTH, "%Y%m%d",
+					new_date);
+			
+			/* Make the calendar entry last all day for now */
+			new_date->tm_mday += 1;
+			mktime(new_date);
+			strftime(end_date, MAX_NAME_LENGTH, "%Y%m%d",
+					new_date);
+
+			time(&now_time);
+			now = localtime(&now_time);
+			strftime(now_date, MAX_NAME_LENGTH, "%Y%m%dT%H%M%S",
+					now);
+			
+			printf("DTSTAMP:%s\n", now_date);
+			printf("DTSTART;VALUE=DATE:%s\n", start_date);
+			printf("DTEND;VALUE=DATE:%s\n", end_date);
+			printf("SUMMARY:Garden work\n");
+			printf("DESCRIPTION:");
+			new_date->tm_mday -= 1;
+			mktime(new_date);
+			num_similar_dates = 0;
+		}
+		/* Only print the trailing newline of the first line if we're
+		 * printing a second line.
+		 */
+		if (num_similar_dates != 0)
+			printf("\\n\n ");
+		printf("%s", item->cal_entry->blurb);
+		num_similar_dates++;
+		old_date = new_date;
+	}
+	printf("END:VEVENT\n");
+	printf("END:VCALENDAR\n");
+}
+
 void print_by_month_calendar(struct date_list *head)
 {
 	int cur_month, cur_year;
@@ -628,6 +694,7 @@ int main (int argc, char *argv[])
 	unsigned int chars_printed;
 	unsigned int calendar_bitmask = 0;
 	int i;
+	int use_ical = 0;
 
 	if (argc < 2) {
 		printf("Help: plant <file> [output type] [options]...\n");
@@ -636,6 +703,8 @@ int main (int argc, char *argv[])
 		printf("  m for a by-month calendar\n");
 		printf("  h for a harvest calendar\n");
 		printf("  s for a seed sprouting calendar\n");
+		printf("Where [options] can be:\n");
+		printf("  i to use ical format instead of plain text\n");
 		return -1;
 	}
 	fp = fopen(argv[1], "r");
@@ -657,6 +726,9 @@ int main (int argc, char *argv[])
 		if (!strcmp(argv[i], "s") ||
 				!strcmp(argv[i], "-s"))
 			calendar_bitmask |= BY_SPROUTING;
+		if (!strcmp(argv[i], "i") ||
+				!strcmp(argv[i], "-i"))
+			use_ical = 1;
 	}
 
 	while (1) {
@@ -688,27 +760,39 @@ int main (int argc, char *argv[])
 	}
 
 	if (calendar_bitmask & BY_MONTH) {
-		chars_printed = printf("\n\nGarden Action Items Calendar\n");
-		for(; chars_printed > 3; chars_printed--)
-			putchar('*');
-		printf("\n");
-		print_by_month_calendar(action_list_head);
+		if (use_ical)
+			make_icalendar(action_list_head);
+		else {
+			chars_printed = printf("\n\nGarden Action Items Calendar\n");
+			for(; chars_printed > 3; chars_printed--)
+				putchar('*');
+			printf("\n");
+			print_by_month_calendar(action_list_head);
+		}
 	}
-	
+
 	if (calendar_bitmask & BY_SPROUTING) {
-		chars_printed = printf("\n\nSeed Sprouting Calendar\n");
-		for(; chars_printed > 3; chars_printed--)
-			putchar('*');
-		printf("\n");
-		print_by_month_calendar(sprouting_list_head);
+		if (use_ical)
+			make_icalendar(sprouting_list_head);
+		else {
+			chars_printed = printf("\n\nSeed Sprouting Calendar\n");
+			for(; chars_printed > 3; chars_printed--)
+				putchar('*');
+			printf("\n");
+			print_by_month_calendar(sprouting_list_head);
+		}
 	}
 
 	if (calendar_bitmask & BY_HARVEST) {
-		chars_printed = printf("\n\nHarvest Calendar\n");
-		for(; chars_printed > 3; chars_printed--)
-			putchar('*');
-		printf("\n");
-		print_by_month_calendar(harvest_list_head);
+		if (use_ical)
+			make_icalendar(harvest_list_head);
+		else {
+			chars_printed = printf("\n\nHarvest Calendar\n");
+			for(; chars_printed > 3; chars_printed--)
+				putchar('*');
+			printf("\n");
+			print_by_month_calendar(harvest_list_head);
+		}
 	}
 
 	return 0;
