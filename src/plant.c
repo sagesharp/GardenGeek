@@ -15,12 +15,15 @@ struct plant {
 	unsigned int	num_weeks_until_outdoor_separation;
 	unsigned int	days_to_harvest;
 	float		germination_rate;
-	unsigned int	avg_days_to_sprout;
+	unsigned int	min_days_to_sprout;
+	float		avg_days_to_sprout;
+	unsigned int	max_days_to_sprout;
 	unsigned int	harvest_removes_plant; /* 0 = false; non-zero = true */
 	/* output */
 	/* XXX: These could be an array with an enum. */
 	struct tm	seeding_date;
 	struct tm	sprouting_date;
+	struct tm	last_chance_sprouting_date;
 	struct tm	indoor_separation_date;
 	struct tm	hardening_off_date;
 	struct tm	outdoor_separation_date;
@@ -130,8 +133,14 @@ struct plant *parse_and_create_plant(FILE *fp)
 	fscanf(fp, "%f", &new_plant->germination_rate);
 	fgetc(fp);
 
-	fscanf(fp, "%u", &new_plant->avg_days_to_sprout);
+	fscanf(fp, "%u", &new_plant->min_days_to_sprout);
 	fgetc(fp);
+
+	fscanf(fp, "%u", &new_plant->max_days_to_sprout);
+	fgetc(fp);
+
+	new_plant->avg_days_to_sprout = (new_plant->min_days_to_sprout +
+			new_plant->max_days_to_sprout) / 2;
 
 	fscanf(fp, "%u", &new_plant->harvest_removes_plant);
 	fgetc(fp);
@@ -182,6 +191,7 @@ int calculate_indoor_plant_dates(struct plant *new_plant)
 
 	/* Set sprouting base date */
 	new_plant->sprouting_date = new_plant->seeding_date;
+	new_plant->last_chance_sprouting_date = new_plant->seeding_date;
 	return 0;
 }
 
@@ -193,6 +203,8 @@ int calculate_direct_sown_plant_dates(struct plant *new_plant)
 	new_plant->seeding_date = new_plant->outdoor_planting_date;
 	
 	new_plant->sprouting_date =
+		new_plant->outdoor_planting_date;
+	new_plant->last_chance_sprouting_date =
 		new_plant->outdoor_planting_date;
 	
 	if (new_plant->num_weeks_until_outdoor_separation) {
@@ -224,7 +236,12 @@ int calculate_plant_dates(struct plant *new_plant)
 		return ret;
 
 	ret = add_days_to_date(&new_plant->sprouting_date,
-			new_plant->avg_days_to_sprout);
+			(int) new_plant->avg_days_to_sprout);
+	if (ret)
+		return ret;
+
+	ret = add_days_to_date(&new_plant->last_chance_sprouting_date,
+			new_plant->max_days_to_sprout);
 	if (ret)
 		return ret;
 
@@ -276,6 +293,8 @@ void print_indoor_plant_dates(struct plant *new_plant)
 			string);
 	print_date("Expect sprouting seeds around",
 			&new_plant->sprouting_date);
+	print_date("Last chance for sprouting seeds",
+			&new_plant->last_chance_sprouting_date);
 
 	if (new_plant->num_weeks_until_indoor_separation)
 		print_date("Separate or move to a bigger indoor pot",
@@ -305,6 +324,8 @@ void print_direct_sown_plant_dates(struct plant *new_plant)
 			(int) num_seeds, string);
 	print_date("Expect sprouting seeds around",
 			&new_plant->sprouting_date);
+	print_date("Last chance for sprouting seeds",
+			&new_plant->last_chance_sprouting_date);
 	
 	if (new_plant->num_weeks_until_outdoor_separation) {
 		strftime(string, MAX_NAME_LENGTH, "%a, %b. %d, %Y",
@@ -427,6 +448,29 @@ int insert_calendar_entry(struct tm *date, char *string,
 	return 1;
 }
 
+int add_sprouting_dates_to_list(struct plant *new_plant,
+		struct date_list **head_ptr)
+{
+	char *string;
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Expect sprouting seeds around",
+			new_plant->name);
+	if (!insert_calendar_entry(&new_plant->sprouting_date,
+				string, head_ptr))
+		return 0;
+
+	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(string, MAX_NAME_LENGTH,
+			"%s -- Last chance for sprouting seeds",
+			new_plant->name);
+	if (!insert_calendar_entry(&new_plant->last_chance_sprouting_date,
+				string, head_ptr))
+		return 0;
+	return 1;
+}
+
 /* Organize the dates in the plant into a larger sorted date list */
 int add_indoor_plant_dates_to_list(struct plant *new_plant,
 		struct date_list **head_ptr, int suppress_sprouting_dates)
@@ -438,12 +482,7 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 		return 0;
 
 	if (!suppress_sprouting_dates) {
-		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-		snprintf(string, MAX_NAME_LENGTH,
-				"%s -- Expect sprouting seeds around",
-				new_plant->name);
-		if (!insert_calendar_entry(&new_plant->sprouting_date,
-					string, head_ptr))
+		if (!add_sprouting_dates_to_list(new_plant, head_ptr))
 			return 0;
 		return 1;
 	}
@@ -500,12 +539,7 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 		return 0;
 
 	if (!suppress_sprouting_dates) {
-		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-		snprintf(string, MAX_NAME_LENGTH,
-				"%s -- Expect sprouting seeds around",
-				new_plant->name);
-		if (!insert_calendar_entry(&new_plant->sprouting_date,
-					string, head_ptr))
+		if (!add_sprouting_dates_to_list(new_plant, head_ptr))
 			return 0;
 		return 1;
 	}
