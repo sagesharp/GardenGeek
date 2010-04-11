@@ -591,19 +591,20 @@ void make_icalendar(struct date_list *head)
 		return;
 	
 	/* Standard ical stuff */ 
-	printf("BEGIN:VCALENDAR\n");
-	printf("PRODID:-//Sarah Sharp//Garden Calendar Tool v0.1//EN\n");
+	printf("BEGIN:VCALENDAR\r\n");
+	printf("VERSION:2.0\r\n");
+	printf("PRODID:-//Sarah Sharp//Garden Calendar Tool v0.1//EN\r\n");
 	/* Following RFC at http://www.ietf.org/rfc/rfc2445.txt */
-	printf("VERSION:2.0\n");
 
 	for (item = head; item != NULL; item = item->next) {
 		new_date = item->cal_entry->date;
 		if (old_date == NULL ||
 				!dates_are_equal(old_date, new_date)) {
 			if (old_date != NULL) {
-				printf("\nEND:VEVENT\n");
+				printf("\r\nEND:VEVENT\r\n");
 			}
-			printf("BEGIN:VEVENT\n");
+			printf("BEGIN:VEVENT\r\n");
+			printf("UID:%p\r\n", &item);
 
 			strftime(start_date, MAX_NAME_LENGTH, "%Y%m%d",
 					new_date);
@@ -619,10 +620,10 @@ void make_icalendar(struct date_list *head)
 			strftime(now_date, MAX_NAME_LENGTH, "%Y%m%dT%H%M%S",
 					now);
 			
-			printf("DTSTAMP:%s\n", now_date);
-			printf("DTSTART;VALUE=DATE:%s\n", start_date);
-			printf("DTEND;VALUE=DATE:%s\n", end_date);
-			printf("SUMMARY:Garden work\n");
+			printf("DTSTAMP:%s\r\n", now_date);
+			printf("DTSTART;VALUE=DATE:%s\r\n", start_date);
+			printf("DTEND;VALUE=DATE:%s\r\n", end_date);
+			printf("SUMMARY:Garden work\r\n");
 			printf("DESCRIPTION:");
 			new_date->tm_mday -= 1;
 			mktime(new_date);
@@ -632,13 +633,13 @@ void make_icalendar(struct date_list *head)
 		 * printing a second line.
 		 */
 		if (num_similar_dates != 0)
-			printf("\\n\n ");
+			printf("\\n\r\n ");
 		printf("%s", item->cal_entry->blurb);
 		num_similar_dates++;
 		old_date = new_date;
 	}
-	printf("END:VEVENT\n");
-	printf("END:VCALENDAR\n");
+	printf("\r\nEND:VEVENT\r\n");
+	printf("END:VCALENDAR\r\n");
 }
 
 void print_by_month_calendar(struct date_list *head)
