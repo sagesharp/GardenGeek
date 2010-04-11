@@ -5,24 +5,23 @@
 # indoor garden plot: sprouts appear 2009-04-03, grow until 2009-04-24
 # outdoor garden plot: bigger plants appear 2009-04-24, harvested 2009-06-11
 #
-british wonder snap pea,28,0,0,2010-02-24,0,50,.8,18,0
+british wonder snap pea,28,0,0,2010-02-24,0,90,.8,18,0
 early spring spinach (1st),3,0,0,2010-03-17,0,60,.8,18,1
-early spring spinach (2nd),3,0,0,2010-03-29,0,55,.8,18,1
-early spring spinach (3rd),4,0,0,2010-04-10,0,50,.8,18,1
-yugoslavian red lettuce (1st),3,3,2,2010-04-24,0,48,.80,7,1
+early spring spinach (2nd),3,0,0,2010-04-06,0,55,.8,18,1
+early spring spinach (3rd),4,0,0,2010-04-17,0,50,.8,18,1
+yugoslavian red lettuce (1st),3,3,2,2010-04-25,0,48,.80,7,1
 yugoslavian red lettuce (2nd),3,3,2,2010-05-11,0,48,.80,7,1
 yugoslavian red lettuce (3rd),3,0,0,2010-05-11,0,48,.80,7,1
 yugoslavian red lettuce (4th),3,0,0,2010-06-02,0,48,.80,7,1
-st. valery carrots (1st),7,0,0,2010-03-29,3,80,.5,14,1
-st. valery carrots (2nd),7,0,0,2010-04-10,3,80,.5,14,1
-st. valery carrots (3rd),7,0,0,2010-04-24,3,80,.5,14,1
-st. valery carrots (4th),7,0,0,2010-05-08,3,80,.5,14,1
-st. valery carrots (5th),7,0,0,2010-05-22,3,75,.5,14,1
-st. valery carrots (6th),7,0,0,2010-06-05,3,70,.5,14,1
-st. valery carrots (7th),7,0,0,2010-06-26,3,70,.5,14,1
+st. valery carrots (1st),7,0,0,2010-04-10,3,80,.5,14,1
+st. valery carrots (2nd),7,0,0,2010-04-24,3,80,.5,14,1
+st. valery carrots (3rd),7,0,0,2010-05-08,3,80,.5,14,1
+st. valery carrots (4th),7,0,0,2010-05-22,3,75,.5,14,1
+st. valery carrots (5th),7,0,0,2010-06-05,3,70,.5,14,1
+st. valery carrots (6th),7,0,0,2010-06-26,3,70,.5,14,1
 scarlet runner beans,20,0,0,2010-04-24,0,75,.8,12,0
 bushy cucumber,4,4,0,2010-05-22,0,47,.5,7,0
-chris cross watermelon (1st),2,8,0,2010-05-29,0,90,.5,7,0
+chris cross watermelon (1st),2,8,0,2010-05-30,0,90,.5,7,0
 chris cross watermelon (2nd),2,8,0,2010-06-19,0,85,.5,7,0
 oregon spring tomatoes (1st),1,7,3,2010-04-13,0,75,.80,10,0
 isis gold tomatoes,2,7,3,2010-04-25,0,75,.80,10,0
@@ -58,11 +57,11 @@ brussels sprouts,1,4,0,2010-04-16,0,85,.6,11,1
 brussels sprouts (ovw),2,4,0,2010-07-10,0,160,.6,11,1
 brussels sprouts (ovw),2,4,0,2010-07-24,0,170,.6,11,1
 sweet marjoram,4,6,0,2010-04-30,0,70,.5,10,0
-basil,4,4,0,2010-04-25,0,85,.5,10,0
+basil,2,4,0,2010-04-26,0,85,.5,10,0
 rosemary,4,9,0,2010-05-19,0,400,.5,10,0
 oregano,4,7,0,2010-05-7,0,85,.5,10,0
 parsley (1st),1,8,0,2010-05-14,0,70,.5,10,0
-parsley (2nd),1,8,0,2010-05-23,0,70,.5,10,0
+parsley (2nd),1,8,0,2010-05-30,0,70,.5,10,0
 parsley (3rd),2,0,0,2010-05-01,0,70,.5,10,0
-sage (1st),2,4,0,2010-05-02,0,70,.75,10,0
+sage (1st),2,4,0,2010-05-09,0,70,.75,10,0
 sage (2nd),2,0,0,2010-05-8,0,70,.75,10,0
