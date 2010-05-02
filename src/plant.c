@@ -454,6 +454,8 @@ int add_sprouting_dates_to_list(struct plant *new_plant,
 	char *string;
 
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!string)
+		return 0;
 	snprintf(string, MAX_NAME_LENGTH,
 			"%s -- Expect sprouting seeds around",
 			new_plant->name);
@@ -462,6 +464,8 @@ int add_sprouting_dates_to_list(struct plant *new_plant,
 		return 0;
 
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!string)
+		return 0;
 	snprintf(string, MAX_NAME_LENGTH,
 			"%s -- Last chance for sprouting seeds",
 			new_plant->name);
@@ -479,7 +483,7 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 	float num_seeds;
 
 	if (!new_plant->num_weeks_indoors)
-		return 0;
+		return 1;
 
 	if (!suppress_sprouting_dates) {
 		if (!add_sprouting_dates_to_list(new_plant, head_ptr))
@@ -489,6 +493,8 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 
 	num_seeds = get_num_seeds_needed(new_plant);
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!string)
+		return 0;
 	snprintf(string, MAX_NAME_LENGTH,
 			"%s -- Start %i seed%s under grow lamp",
 			new_plant->name,
@@ -500,6 +506,8 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 
 	if (new_plant->num_weeks_until_indoor_separation) {
 		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		if (!string)
+			return 0;
 		snprintf(string, MAX_NAME_LENGTH,
 				"%s -- Separate or move to a bigger indoor pot",
 				new_plant->name);
@@ -509,6 +517,8 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 	}
 
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!string)
+		return 0;
 	snprintf(string, MAX_NAME_LENGTH,
 			"%s -- Start hardening off seedlings",
 			new_plant->name);
@@ -517,6 +527,8 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 		return 0;
 
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!string)
+		return 0;
 	num_seeds = new_plant->num_plants_to_harvest;
 	snprintf(string, MAX_NAME_LENGTH,
 			"%s -- Transplant %i plant%s outdoors",
@@ -536,7 +548,7 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 	float num_seeds;
 
 	if (new_plant->num_weeks_indoors)
-		return 0;
+		return 1;
 
 	if (!suppress_sprouting_dates) {
 		if (!add_sprouting_dates_to_list(new_plant, head_ptr))
@@ -577,6 +589,8 @@ int add_harvest_dates_to_list(struct plant *new_plant,
 	unsigned int num_plants;
 
 	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!string)
+		return 0;
 	num_plants = new_plant->num_plants_to_harvest;
 	if (new_plant->harvest_removes_plant)
 		snprintf(string, MAX_NAME_LENGTH,
@@ -787,20 +801,25 @@ int main (int argc, char *argv[])
 			printf("\n");
 		}
 		if (calendar_bitmask & BY_MONTH) {
-			add_indoor_plant_dates_to_list(new_plant,
-					&action_list_head, 1);
-			add_direct_sown_plant_dates_to_list(new_plant,
-					&action_list_head, 1);
+			if (!add_indoor_plant_dates_to_list(new_plant,
+					&action_list_head, 1))
+				return -1;
+			if (!add_direct_sown_plant_dates_to_list(new_plant,
+					&action_list_head, 1))
+				return -1;
 		}
 		if (calendar_bitmask & BY_SPROUTING) {
-			add_indoor_plant_dates_to_list(new_plant,
-					&sprouting_list_head, 0);
-			add_direct_sown_plant_dates_to_list(new_plant,
-					&sprouting_list_head, 0);
+			if (!add_indoor_plant_dates_to_list(new_plant,
+					&sprouting_list_head, 0))
+				return -1;
+			if (!add_direct_sown_plant_dates_to_list(new_plant,
+					&sprouting_list_head, 0))
+				return -1;
 		}
 		if (calendar_bitmask & BY_HARVEST) {
-			add_harvest_dates_to_list(new_plant,
-					&harvest_list_head);
+			if (!add_harvest_dates_to_list(new_plant,
+					&harvest_list_head))
+				return -1;
 		}
 	}
 
