@@ -619,6 +619,8 @@ void make_icalendar(struct date_list *head)
 	char start_date[MAX_NAME_LENGTH];
 	char end_date[MAX_NAME_LENGTH];
 	char now_date[MAX_NAME_LENGTH];
+	char uid[4*MAX_NAME_LENGTH];
+	char ptr[MAX_NAME_LENGTH];
 	int num_similar_dates = 0;
 
 	if (!head)
@@ -638,7 +640,18 @@ void make_icalendar(struct date_list *head)
 				printf("\r\nEND:VEVENT\r\n");
 			}
 			printf("BEGIN:VEVENT\r\n");
-			printf("UID:%p\r\n", &item);
+
+			/* What to use as a unique ID?  Must be "globally unique
+			 * across icalendars.  Seconds since 1970 + hash of
+			 * name?  No requirement that plant names be unique
+			 * across one garden.
+			 */
+			time(&now_time);
+			now = localtime(&now_time);
+			strftime(uid, MAX_NAME_LENGTH, "%s", now);
+			snprintf(ptr, MAX_NAME_LENGTH, "%p@SSGCT", item);
+			strncat(uid, ptr, 4*MAX_NAME_LENGTH - 1);
+			printf("UID:%s\r\n", uid);
 
 			strftime(start_date, MAX_NAME_LENGTH, "%Y%m%d",
 					new_date);
@@ -648,12 +661,9 @@ void make_icalendar(struct date_list *head)
 			mktime(new_date);
 			strftime(end_date, MAX_NAME_LENGTH, "%Y%m%d",
 					new_date);
-
-			time(&now_time);
-			now = localtime(&now_time);
+			
 			strftime(now_date, MAX_NAME_LENGTH, "%Y%m%dT%H%M%S",
 					now);
-			
 			printf("DTSTAMP:%s\r\n", now_date);
 			printf("DTSTART;VALUE=DATE:%s\r\n", start_date);
 			printf("DTEND;VALUE=DATE:%s\r\n", end_date);
