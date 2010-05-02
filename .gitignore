@@ -3,3 +3,9 @@
 hello-cairo
 hello.png
 plant
+push-ical.sh
+*.ics
+calendar.txt
+harvest.txt
+plant-calendar.txt
+sprouting.txt
