@@ -32,7 +32,8 @@ struct plant {
 
 struct plant_date {
 	struct tm	*date;
-	char		*blurb;
+	char		*summary;
+	char		*description;
 };
 
 struct date_list {
@@ -421,7 +422,8 @@ int sort_in_one_date(struct plant_date *cal_entry,
 	return 1;
 }
 
-struct plant_date *make_calendar_entry(struct tm *date, char *blurb)
+struct plant_date *make_calendar_entry(struct tm *date,
+		char *summary, char *description)
 {
 	struct plant_date *cal_entry;
 
@@ -430,16 +432,17 @@ struct plant_date *make_calendar_entry(struct tm *date, char *blurb)
 		return NULL;
 
 	cal_entry->date = date;
-	cal_entry->blurb = blurb;
+	cal_entry->summary = summary;
+	cal_entry->description = description;
 	return cal_entry;
 }
 
-int insert_calendar_entry(struct tm *date, char *string,
+int insert_calendar_entry(struct tm *date, char *summary, char *description,
 		struct date_list **head_ptr)
 {
 	struct plant_date *cal_entry;
 
-	cal_entry = make_calendar_entry(date, string);
+	cal_entry = make_calendar_entry(date, summary, description);
 	if (!cal_entry)
 		return 0;
 
@@ -451,26 +454,39 @@ int insert_calendar_entry(struct tm *date, char *string,
 int add_sprouting_dates_to_list(struct plant *new_plant,
 		struct date_list **head_ptr)
 {
-	char *string;
+	char *summary;
+	char *description;
 
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	if (!string)
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!description)
 		return 0;
-	snprintf(string, MAX_NAME_LENGTH,
+	snprintf(description, MAX_NAME_LENGTH,
 			"%s -- Expect sprouting seeds around",
 			new_plant->name);
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Sprouting: %s",
+			new_plant->name);
 	if (!insert_calendar_entry(&new_plant->sprouting_date,
-				string, head_ptr))
+				summary, description, head_ptr))
 		return 0;
 
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	if (!string)
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!description)
 		return 0;
-	snprintf(string, MAX_NAME_LENGTH,
+	snprintf(description, MAX_NAME_LENGTH,
 			"%s -- Last chance for sprouting seeds",
 			new_plant->name);
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Check sprouts: %s",
+			new_plant->name);
 	if (!insert_calendar_entry(&new_plant->last_chance_sprouting_date,
-				string, head_ptr))
+				summary, description, head_ptr))
 		return 0;
 	return 1;
 }
@@ -479,7 +495,8 @@ int add_sprouting_dates_to_list(struct plant *new_plant,
 int add_indoor_plant_dates_to_list(struct plant *new_plant,
 		struct date_list **head_ptr, int suppress_sprouting_dates)
 {
-	char *string;
+	char *summary;
+	char *description;
 	float num_seeds;
 
 	if (!new_plant->num_weeks_indoors)
@@ -491,52 +508,76 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 		return 1;
 	}
 
+	/* Starting seeds indoors */
 	num_seeds = get_num_seeds_needed(new_plant);
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	if (!string)
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!description)
 		return 0;
-	snprintf(string, MAX_NAME_LENGTH,
+	snprintf(description, MAX_NAME_LENGTH,
 			"%s -- Start %i seed%s under grow lamp",
 			new_plant->name,
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "");
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Seed indoors: %s", new_plant->name);
 	if (!insert_calendar_entry(&new_plant->seeding_date,
-				string, head_ptr))
+				summary, description, head_ptr))
 		return 0;
 
+	/* Separating seeds indoors */
 	if (new_plant->num_weeks_until_indoor_separation) {
-		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-		if (!string)
+		description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		if (!description)
 			return 0;
-		snprintf(string, MAX_NAME_LENGTH,
+		snprintf(description, MAX_NAME_LENGTH,
 				"%s -- Separate or move to a bigger indoor pot",
 				new_plant->name);
+		summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		if (!summary)
+			return 0;
+		snprintf(summary, MAX_NAME_LENGTH,
+				"Separate: %s", new_plant->name);
 		if (!insert_calendar_entry(&new_plant->indoor_separation_date,
-					string, head_ptr))
+					summary, description, head_ptr))
 			return 0;
 	}
 
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	if (!string)
+	/* Harden off seedlings */
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!description)
 		return 0;
-	snprintf(string, MAX_NAME_LENGTH,
-			"%s -- Start hardening off seedlings",
+	snprintf(description, MAX_NAME_LENGTH,
+			"%s -- Start hardening off seedlings (leave them out during the day and bring them in at night)",
 			new_plant->name);
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Harden off: %s", new_plant->name);
 	if (!insert_calendar_entry(&new_plant->hardening_off_date,
-			       	string, head_ptr))
+			       	summary, description, head_ptr))
 		return 0;
 
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	if (!string)
+	/* Transplant outdoors */
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!description)
 		return 0;
 	num_seeds = new_plant->num_plants_to_harvest;
-	snprintf(string, MAX_NAME_LENGTH,
+	snprintf(description, MAX_NAME_LENGTH,
 			"%s -- Transplant %i plant%s outdoors",
 			new_plant->name,
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "");
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Transplant: %s", new_plant->name);
 	if (!insert_calendar_entry(&new_plant->outdoor_planting_date,
-			       	string, head_ptr))
+			       	summary, description, head_ptr))
 		return 0;
 	return 1;
 }
@@ -544,7 +585,8 @@ int add_indoor_plant_dates_to_list(struct plant *new_plant,
 int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 		struct date_list **head_ptr, int suppress_sprouting_dates)
 {
-	char *string;
+	char *summary;
+	char *description;
 	float num_seeds;
 
 	if (new_plant->num_weeks_indoors)
@@ -557,26 +599,36 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 	}
 
 	num_seeds = get_num_seeds_needed(new_plant);
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	snprintf(string, MAX_NAME_LENGTH,
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	snprintf(description, MAX_NAME_LENGTH,
 			"%s -- Direct sow %i seed%s outdoors",
 			new_plant->name,
 			(int) num_seeds,
 			(num_seeds > 1) ? "s" : "");
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Direct sow: %s", new_plant->name);
 	if (!insert_calendar_entry(&new_plant->outdoor_planting_date,
-				string, head_ptr))
+				summary, description, head_ptr))
 		return 0;
 
 	if (new_plant->num_weeks_until_outdoor_separation) {
-		string = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		description = malloc(sizeof(char)*MAX_NAME_LENGTH);
 		num_seeds = new_plant->num_plants_to_harvest;
-		snprintf(string, MAX_NAME_LENGTH,
+		snprintf(description, MAX_NAME_LENGTH,
 				"%s -- Thin to %i plant%s",
 				new_plant->name,
 				(int) num_seeds,
 				(num_seeds > 1) ? "s" : "");
+		summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+		if (!summary)
+			return 0;
+		snprintf(summary, MAX_NAME_LENGTH,
+				"Thin: %s", new_plant->name);
 		if (!insert_calendar_entry(&new_plant->outdoor_separation_date,
-					string, head_ptr))
+					summary, description, head_ptr))
 			return 0;
 	}
 	return 1;
@@ -585,25 +637,31 @@ int add_direct_sown_plant_dates_to_list(struct plant *new_plant,
 int add_harvest_dates_to_list(struct plant *new_plant,
 		struct date_list **head_ptr)
 {
-	char *string;
+	char *summary;
+	char *description;
 	unsigned int num_plants;
 
-	string = malloc(sizeof(char)*MAX_NAME_LENGTH);
-	if (!string)
+	summary = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!summary)
+		return 0;
+	snprintf(summary, MAX_NAME_LENGTH,
+			"Harvest: %s", new_plant->name);
+	description = malloc(sizeof(char)*MAX_NAME_LENGTH);
+	if (!description)
 		return 0;
 	num_plants = new_plant->num_plants_to_harvest;
 	if (new_plant->harvest_removes_plant)
-		snprintf(string, MAX_NAME_LENGTH,
+		snprintf(description, MAX_NAME_LENGTH,
 				"%s -- Harvest %u plant%s",
 				new_plant->name,
 				num_plants,
 				(num_plants > 1) ? "s": "");
 	else
-		snprintf(string, MAX_NAME_LENGTH,
+		snprintf(description, MAX_NAME_LENGTH,
 				"%s -- Start harvesting",
 				new_plant->name);
 	if (!insert_calendar_entry(&new_plant->harvest_date,
-			       	string, head_ptr))
+			       	summary, description, head_ptr))
 		return 0;
 
 	return 1;
@@ -625,7 +683,6 @@ void print_month_and_year(struct tm *new_date)
 
 void make_icalendar(struct date_list *head)
 {
-	struct tm *old_date = NULL;
 	struct tm *new_date;
 	struct tm *now;
 	time_t now_time;
@@ -635,7 +692,6 @@ void make_icalendar(struct date_list *head)
 	char now_date[MAX_NAME_LENGTH];
 	char uid[4*MAX_NAME_LENGTH];
 	char ptr[MAX_NAME_LENGTH];
-	int num_similar_dates = 0;
 
 	if (!head)
 		return;
@@ -648,55 +704,40 @@ void make_icalendar(struct date_list *head)
 
 	for (item = head; item != NULL; item = item->next) {
 		new_date = item->cal_entry->date;
-		if (old_date == NULL ||
-				!dates_are_equal(old_date, new_date)) {
-			if (old_date != NULL) {
-				printf("\r\nEND:VEVENT\r\n");
-			}
-			printf("BEGIN:VEVENT\r\n");
+		printf("BEGIN:VEVENT\r\n");
 
-			/* What to use as a unique ID?  Must be "globally unique
-			 * across icalendars.  Seconds since 1970 + hash of
-			 * name?  No requirement that plant names be unique
-			 * across one garden.
-			 */
-			time(&now_time);
-			now = localtime(&now_time);
-			strftime(uid, MAX_NAME_LENGTH, "%s", now);
-			snprintf(ptr, MAX_NAME_LENGTH, "%p@SSGCT", item);
-			strncat(uid, ptr, 4*MAX_NAME_LENGTH - 1);
-			printf("UID:%s\r\n", uid);
-
-			strftime(start_date, MAX_NAME_LENGTH, "%Y%m%d",
-					new_date);
-			
-			/* Make the calendar entry last all day for now */
-			new_date->tm_mday += 1;
-			mktime(new_date);
-			strftime(end_date, MAX_NAME_LENGTH, "%Y%m%d",
-					new_date);
-			
-			strftime(now_date, MAX_NAME_LENGTH, "%Y%m%dT%H%M%S",
-					now);
-			printf("DTSTAMP:%s\r\n", now_date);
-			printf("DTSTART;VALUE=DATE:%s\r\n", start_date);
-			printf("DTEND;VALUE=DATE:%s\r\n", end_date);
-			printf("SUMMARY:Garden work\r\n");
-			printf("DESCRIPTION:");
-			new_date->tm_mday -= 1;
-			mktime(new_date);
-			num_similar_dates = 0;
-		}
-		/* Only print the trailing newline of the first line if we're
-		 * printing a second line.
+		/* What to use as a unique ID?  Must be "globally unique
+		 * across icalendars.  Seconds since 1970 + hash of
+		 * name?  No requirement that plant names be unique
+		 * across one garden.
 		 */
-		if (num_similar_dates != 0)
-			printf("\\n\r\n ");
-		printf("%s", item->cal_entry->blurb);
-		num_similar_dates++;
-		old_date = new_date;
+		time(&now_time);
+		now = localtime(&now_time);
+		strftime(uid, MAX_NAME_LENGTH, "%s", now);
+		snprintf(ptr, MAX_NAME_LENGTH, "%p@SSGCT", item);
+		strncat(uid, ptr, 4*MAX_NAME_LENGTH - 1);
+		printf("UID:%s\r\n", uid);
+
+		strftime(start_date, MAX_NAME_LENGTH, "%Y%m%d",
+				new_date);
+
+		/* Make the calendar entry last all day for now */
+		new_date->tm_mday += 1;
+		mktime(new_date);
+		strftime(end_date, MAX_NAME_LENGTH, "%Y%m%d",
+				new_date);
+
+		strftime(now_date, MAX_NAME_LENGTH, "%Y%m%dT%H%M%S",
+				now);
+		printf("DTSTAMP:%s\r\n", now_date);
+		printf("DTSTART;VALUE=DATE:%s\r\n", start_date);
+		printf("DTEND;VALUE=DATE:%s\r\n", end_date);
+		printf("SUMMARY:%s\r\n", item->cal_entry->summary);
+		printf("DESCRIPTION:%s\r\n", item->cal_entry->description);
+		new_date->tm_mday -= 1;
+		mktime(new_date);
+		printf("END:VEVENT\r\n");
 	}
-	printf("\r\nEND:VEVENT\r\n");
 	printf("END:VCALENDAR\r\n");
 }
 
@@ -730,10 +771,10 @@ void print_by_month_calendar(struct date_list *head)
 		if (old_date == NULL ||
 				!dates_are_equal(old_date, new_date))
 			printf("\n   %s: %s\n", string,
-					item->cal_entry->blurb);
+					item->cal_entry->description);
 		else
 			printf("             %s\n",
-					item->cal_entry->blurb);
+					item->cal_entry->description);
 		old_date = new_date;
 	}
 }
