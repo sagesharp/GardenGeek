@@ -5,34 +5,37 @@
 # indoor garden plot: sprouts appear 2009-04-03, grow until 2009-04-24
 # outdoor garden plot: bigger plants appear 2009-04-24, harvested 2009-06-11
 #
-british wonder snap pea,28,0,0,2010-02-24,0,90,.8,6,14,0
+#(didn't sprout) brussels sprouts,1,4,0,2010-04-16,0,85,.6,5,17,1
+#(didn't sprout) rosemary,4,9,0,2010-05-19,0,400,.5,5,14,0
+#(didn't sprout) parsley 2008 (1st),1,8,0,2010-05-14,0,70,.5,5,14,0
+#(didn't sprout inside, gave up) yugoslavian red lettuce (1st),3,3,2,2010-04-25,0,48,.80,2,15,1
+#(planted all at once) st. valery carrots (2nd),7,0,0,2010-04-24,3,80,.5,7,21,1
+#(missed this date because 2nd bed wasn't cleared) early spring spinach (3rd),4,0,0,2010-04-17,0,50,.8,6,21,1
+#(plants died in orange ant spray accident) early snowball cauliflower (1st),2,8,3,2010-05-10,0,70,.75,5,20,1
+#(plant died when left outside) early snowball cauliflower (2nd),1,8,3,2010-05-23,0,70,.25,5,20,1
+#(gave to my dad as seedling) yellow pear tomatoes,1,8,3,2010-05-05,0,75,.80,6,14,0
+#
+# (look up harvest dates, subtract 20) italian kale,3,0,0,2010-04-24,0,50,.5,2,15,1
+# (look up harvest dates, subtract 20) swiss chard,4,0,0,2010-04-24,0,50,.5,2,15,1
+# (look up harvest dates, subtract 20) broccoli,2,0,0,2010-04-24,0,50,.5,2,15,1
+british wonder snap pea,3,0,0,2010-02-24,0,90,.8,6,14,0
+oregon snap pea,3,0,0,2010-04-10,0,75,.8,6,14,0
 early spring spinach (1st),3,0,0,2010-03-17,0,60,.8,6,21,1
 early spring spinach (2nd),3,0,0,2010-04-06,0,55,.8,6,21,1
-early spring spinach (3rd),4,0,0,2010-04-17,0,50,.8,6,21,1
-yugoslavian red lettuce (1st),3,3,2,2010-04-25,0,48,.80,2,15,1
-yugoslavian red lettuce (2nd),3,3,2,2010-05-11,0,48,.80,2,15,1
-yugoslavian red lettuce (3rd),3,0,0,2010-05-11,0,48,.80,2,15,1
-yugoslavian red lettuce (4th),3,0,0,2010-06-02,0,48,.80,2,15,1
-st. valery carrots (1st),7,0,0,2010-04-10,3,80,.5,7,21,1
-st. valery carrots (2nd),7,0,0,2010-04-24,3,80,.5,7,21,1
-st. valery carrots (3rd),7,0,0,2010-05-08,3,80,.5,7,21,1
-st. valery carrots (4th),7,0,0,2010-05-22,3,75,.5,7,21,1
-st. valery carrots (5th),7,0,0,2010-06-05,3,70,.5,7,21,1
-st. valery carrots (6th),7,0,0,2010-06-26,3,70,.5,7,21,1
-scarlet runner beans,20,0,0,2010-04-24,0,75,.8,8,16,0
-bushy cucumber,4,4,0,2010-05-22,0,47,.5,4,9,0
+st. valery carrots (1st),14,0,0,2010-04-10,3,80,.5,7,21,1
+loose leaf lettuce,2,0,0,2010-04-24,0,34,.80,2,15,1
+bak choi,4,0,0,2010-04-24,0,50,.5,2,15,1
+scarlet runner beans,20,0,0,2010-05-01,0,75,.8,8,16,0
+bushy cucumber (started indoors),4,4,0,2010-05-08,0,47,.5,4,9,0
+bushy cucumber (direct sown),4,0,0,2010-05-22,0,47,.5,4,9,0
 chris cross watermelon (1st),2,8,0,2010-05-30,0,90,.5,3-7,0
-chris cross watermelon (2nd),2,8,0,2010-06-19,0,85,.5,3-7,0
-oregon spring tomatoes (1st),1,7,3,2010-04-13,0,75,.80,6,14,0
-isis gold tomatoes,2,7,3,2010-04-25,0,75,.80,6,14,0
-manitoba tomatoes,2,7,3,2010-04-25,0,75,.80,6,14,0
-yellow pear tomatoes,2,7,3,2010-04-25,0,75,.80,6,14,0
-yellow pear tomatoes,1,7,3,2010-05-05,0,75,.80,6,14,0
-pac choi,2,3,0,2010-05-01,0,50,.5,2,15,1
-early snowball cauliflower (1st),2,8,3,2010-05-10,0,70,.75,5,20,1
-early snowball cauliflower (2nd),1,8,3,2010-05-23,0,70,.25,5,20,1
-early snowball cauliflower (3rd),1,0,0,2010-05-22,3,70,.75,5,20,1
-early snowball cauliflower (4th),1,0,0,2010-06-12,3,70,.75,5,20,1
+chris cross watermelon (2nd),2,0,0,2010-06-19,0,85,.5,3-7,0
+oregon spring tomatoes,1,7,3,2010-04-13,0,75,.80,6,14,0
+isis gold tomatoes,2,8,3,2010-05-01,0,75,.80,6,14,0
+valenia tomatoes,2,8,3,2010-05-01,0,75,.80,6,14,0
+yellow pear tomatoes,1,8,3,2010-05-01,0,75,.80,6,14,0
+early snowball cauliflower (2nd),1,0,0,2010-05-22,3,70,.75,5,20,1
+early snowball cauliflower (3rd),1,0,0,2010-06-12,3,70,.75,5,20,1
 early snowball cauliflower (ovw 1st),2,0,0,2010-07-10,3,120,.75,5,20,1
 early snowball cauliflower (ovw 2nd),2,0,0,2010-07-31,3,130,.75,5,20,1
 early snowball cauliflower (ovw 3rd),2,0,0,2010-08-14,3,140,.75,5,20,1
@@ -43,25 +46,13 @@ lacinato kale (ovw 4th),2,0,0,2010-08-28,3,130,.75,5,15,0
 lacinato kale (ovw 5th),2,0,0,2010-09-11,3,150,.75,5,15,0
 lacinato kale (ovw 6th),2,0,0,2010-09-25,3,170,.75,5,15,0
 butternut squash,2,0,0,2010-07-10,0,100,.6,5,10,0
-copra storage onions,25,3,2,2010-04-24,0,104,.75,6,12,0
-copra storage onions (bulbs),25,0,0,2010-04-24,2,104,.75,6,12,0
-yellow borettana onion (1st),29,5,0,2010-04-23,0,95,.6,6,12,0
-yellow borettana onion (2nd),40,5,0,2010-05-01,0,95,.6,6,12,0
-mongolian giant sunflower (1st),3,0,0,2010-04-24,0,90,.75,7,14,0
-titian giant sunflower (1st),3,0,0,2010-04-24,0,90,.75,7,14,0
-mongolian giant sunflower (2nd),3,0,0,2010-05-15,0,90,.75,7,14,0
-titian giant sunflower (2nd),3,0,0,2010-05-15,0,90,.75,7,14,0
-mongolian giant sunflower (3rd),3,0,0,2010-06-05,0,90,.75,7,14,0
-titian giant sunflower (3rd),3,0,0,2010-06-05,0,90,.75,7,14,0
-brussels sprouts,1,4,0,2010-04-16,0,85,.6,5,17,1
+copra storage onions (bulbs),25,0,0,2010-03-14,2,84,.75,6,12,0
+yellow borettana onion (1st),29,5,0,2010-05-02,0,95,.6,6,12,0
+yellow borettana onion (2nd),40,5,0,2010-05-08,0,95,.6,6,12,0
+mongolian giant sunflower (1st),15,0,0,2010-04-18,0,90,.75,7,14,0
+titian giant sunflower (1st),15,0,0,2010-04-18,0,90,.75,7,14,0
+smaller sunflowers (1st),15,0,0,2010-04-18,0,90,.75,7,14,0
 brussels sprouts (ovw),2,4,0,2010-07-10,0,160,.6,5,17,1
 brussels sprouts (ovw),2,4,0,2010-07-24,0,170,.6,5,17,1
-sweet marjoram,4,6,0,2010-04-30,0,70,.5,5,14,0
-basil,2,4,0,2010-04-26,0,85,.5,5,14,0
-rosemary,4,9,0,2010-05-19,0,400,.5,5,14,0
-oregano,4,7,0,2010-05-7,0,85,.5,5,14,0
-parsley (1st),1,8,0,2010-05-14,0,70,.5,5,14,0
-parsley (2nd),1,8,0,2010-05-30,0,70,.5,5,14,0
-parsley (3rd),2,0,0,2010-05-01,0,70,.5,5,14,0
-sage (1st),2,4,0,2010-05-09,0,70,.75,5,14,0
-sage (2nd),2,0,0,2010-05-8,0,70,.75,5,14,0
+basil,6,4,0,2010-05-08,0,85,.5,5,14,0
+parsley,2,0,0,2010-05-02,0,70,.5,5,14,0
