@@ -1,22 +1,21 @@
-There are a few files in this project that do not fall under the GPL:
- - doubling-rates.png
- - light-level-and-growth-rates.png
- - veggie_calendar.pdf
+Resources I referenced while creating this project include:
 
-The first two picture files are taken from the google books preview of Steven
-Solomon's book "Growing Vegetables West of the Cascades".  I own the book, and I
-highly recommend you buy it too.
+Steven Solomon's book "Growing Vegetables West of the Cascades".
 
 http://books.google.com/books?id=uc4-2jATIrEC&dq=growing+vegetable+west+of+the+cascades&printsec=frontcover&source=bn&hl=en&ei=fs92S7_1G4XOsgPapt3LCA&sa=X&oi=book_result&ct=result&resnum=4&ved=0CCEQ6AEwAw#v=onepage&q=growing vegetable west of the cascades&f=false
 
-The vegetable calendar is taken from the Portland Nursery website:
+The vegetable calendar at the Portland Nursery website:
 
 http://www.portlandnursery.com/service/brochures.shtml
 
-They update it from time to time, so it is worth grabbing the latest calendar
-(especially with the climate change caused by global warming).
+icalendar format RFC:
 
-If these files are still here when the project is released, it means I haven't
-done my job of scrubbing the project of files that I'm not allowed to
-distribute.  Drop me an email <sarah@thesharps.us> and remind me of my licensing
-obligations.  If you've dug this out of the git history, good for you.
+http://www.ietf.org/rfc/rfc2445.txt
+
+The Oregon State Garden Extension planting guide:
+
+http://extension.oregonstate.edu/catalog/html/grow/grow/planting.html
+
+Ed Hume Seeds' list of average last frost dates:
+
+http://www.humeseeds.com/frost1.htm#OR
