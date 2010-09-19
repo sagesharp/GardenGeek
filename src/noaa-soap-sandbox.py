@@ -34,21 +34,15 @@ def getText(nodelist):
 def sandbox():
 	url = 'http://www.weather.gov/forecasts/xml/SOAP_server/ndfdXMLserver.php?wsdl'
 	client = Client(url)
-	print client
 	latlong_xml = client.service.LatLonListZipCode('00000')
-	print latlong_xml
 
 	dom = parseString(latlong_xml)
-	latlong_elements = dom.getElementsByTagName("latLonList")
-	latlong = getText(latlong_elements[0].childNodes)
-	print latlong
-	# Now separate out the latitude and longitude
+	latlong = getText(dom.getElementsByTagName("latLonList")[0].childNodes)
 	latitude = float(latlong.split(',')[0])
 	longitude = float(latlong.split(',')[1])
 
 	requests = client.factory.create('weatherParametersType')
 	requests.mint = 'TRUE'
-	print requests
 	mintemp = client.service.NDFDgen(latitude, longitude, 'glance',
 			datetime.now(), datetime.now(), requests)
 	print mintemp
