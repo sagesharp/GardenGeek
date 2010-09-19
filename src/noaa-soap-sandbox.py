@@ -39,7 +39,7 @@ def findTemp(nodelist):
 		temperature = getText(values[0].childNodes)
 		return int(temperature)
 
-def sandbox(zipcode):
+def getTempXml(zipcode):
 	url = 'http://www.weather.gov/forecasts/xml/SOAP_server/ndfdXMLserver.php?wsdl'
 	client = Client(url)
 	latlong_xml = client.service.LatLonListZipCode(zipcode)
@@ -68,4 +68,4 @@ if __name__ == "__main__":
 	if len(args) != 1 or not args[0].isdigit() or len(args[0]) != 5:
 		printUsage()
 		sys.exit()
-	sandbox(args[0])
+	getTempXml(args[0])
