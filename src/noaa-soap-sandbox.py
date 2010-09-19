@@ -23,6 +23,8 @@
 from suds.client import Client
 from datetime import *
 from xml.dom.minidom import parse, parseString
+import sys
+from optparse import OptionParser
 
 def getText(nodelist):
 	rc = []
@@ -37,10 +39,10 @@ def findTemp(nodelist):
 		temperature = getText(values[0].childNodes)
 		return int(temperature)
 
-def sandbox():
+def sandbox(zipcode):
 	url = 'http://www.weather.gov/forecasts/xml/SOAP_server/ndfdXMLserver.php?wsdl'
 	client = Client(url)
-	latlong_xml = client.service.LatLonListZipCode('00000')
+	latlong_xml = client.service.LatLonListZipCode(zipcode)
 
 	dom = parseString(latlong_xml)
 	latlong = getText(dom.getElementsByTagName("latLonList")[0].childNodes)
@@ -56,5 +58,14 @@ def sandbox():
 	temperature = findTemp(temps)
 	print temperature
 
+def printUsage():
+	print "Usage: noaa-soap-sandbox.py zipcode"
+	print "   zipcode: 5-digit United States postal code"
+
 if __name__ == "__main__":
-	sandbox()
+	parser = OptionParser()
+	(options, args) = parser.parse_args()
+	if len(args) != 1 or not args[0].isdigit() or len(args[0]) != 5:
+		printUsage()
+		sys.exit()
+	sandbox(args[0])
