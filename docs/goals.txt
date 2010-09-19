@@ -87,3 +87,8 @@ Frost warnings
 
  - http://www.nws.noaa.gov/xml/
  - http://www.w3schools.com/SOAP/soap_intro.asp
+
+ - Picking python, since remember the milk also has a python api.
+ - suds is a good python client-side soap tool:
+	https://fedorahosted.org/suds/
+ - pydoc is like man for python.
