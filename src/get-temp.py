@@ -59,7 +59,7 @@ def getTempXml(zipcode):
 	print temperature
 
 def printUsage():
-	print "Usage: noaa-soap-sandbox.py zipcode"
+	print "Usage: get-temp.py zipcode"
 	print "   zipcode: 5-digit United States postal code"
 
 if __name__ == "__main__":
