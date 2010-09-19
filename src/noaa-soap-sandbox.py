@@ -14,30 +14,42 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#
+# Note: This uses a sample function from the Python documentation of minidom,
+# getText().  The documentation, and its examples, are released under a
+# GPL-compatible license, according to http://docs.python.org/license.html
 
 from suds.client import Client
 from datetime import *
-import xml.parsers.expat
+from xml.dom.minidom import parse, parseString
 
-def print_latlong(data):
-	print ' ', repr(data)
+def getText(nodelist):
+	rc = []
+	for node in nodelist:
+		if node.nodeType == node.TEXT_NODE:
+			rc.append(node.data)
+	return ''.join(rc)
 
 def sandbox():
 	url = 'http://www.weather.gov/forecasts/xml/SOAP_server/ndfdXMLserver.php?wsdl'
 	client = Client(url)
 	print client
-	latlong = client.service.LatLonListZipCode('00000')
-	print latlong
+	latlong_xml = client.service.LatLonListZipCode('00000')
+	print latlong_xml
 
-	# FIXME grab the lat
-	p = xml.parsers.expat.ParserCreate()
-	p.CharacterDataHandler = print_latlong
-	p.Parse(latlong)
+	dom = parseString(latlong_xml)
+	latlong_elements = dom.getElementsByTagName("latLonList")
+	latlong = getText(latlong_elements[0].childNodes)
+	print latlong
+	# Now separate out the latitude and longitude
+	latitude = float(latlong.split(',')[0])
+	longitude = float(latlong.split(',')[1])
 
 	requests = client.factory.create('weatherParametersType')
 	requests.mint = 'TRUE'
 	print requests
-	mintemp = client.service.NDFDgen(40, -120, 'glance',
+	mintemp = client.service.NDFDgen(latitude, longitude, 'glance',
 			datetime.now(), datetime.now(), requests)
 	print mintemp
 
