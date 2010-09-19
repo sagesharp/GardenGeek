@@ -31,6 +31,12 @@ def getText(nodelist):
 			rc.append(node.data)
 	return ''.join(rc)
 
+def findTemp(nodelist):
+	for node in nodelist:
+		values = node.getElementsByTagName("value")
+		temperature = getText(values[0].childNodes)
+		return int(temperature)
+
 def sandbox():
 	url = 'http://www.weather.gov/forecasts/xml/SOAP_server/ndfdXMLserver.php?wsdl'
 	client = Client(url)
@@ -45,7 +51,10 @@ def sandbox():
 	requests.mint = 'TRUE'
 	mintemp = client.service.NDFDgen(latitude, longitude, 'glance',
 			datetime.now(), datetime.now(), requests)
-	print mintemp
+	dom2 = parseString(mintemp)
+	temps = dom2.getElementsByTagName("temperature")
+	temperature = findTemp(temps)
+	print temperature
 
 if __name__ == "__main__":
 	sandbox()
