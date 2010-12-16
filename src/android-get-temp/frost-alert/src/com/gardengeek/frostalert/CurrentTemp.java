@@ -6,6 +6,7 @@ import com.gardengeek.frostalert.FrostAlertApp;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.GridView;
 
 public class CurrentTemp extends Activity {
     @Override
@@ -14,6 +15,9 @@ public class CurrentTemp extends Activity {
         setContentView(R.layout.temp);
         TextView tempText = (TextView) findViewById(R.id.zipcode);
         tempText.setText(getZip());
+        GridView gridview = (GridView) findViewById(R.id.gridview);
+        gridview.setAdapter(new ImageAdapter(this));
+
     }
     
     private CharSequence getZip()
