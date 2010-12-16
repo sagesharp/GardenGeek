@@ -1,0 +1,21 @@
+Looked at TippyTipper (http://code.google.com/p/tippytipper/) as example.
+
+TippyTipperApplication.java is a mostly empty parent class that defines a new
+TipCalculatorService.  This class gets most of the real work done (calculations,
+formating, etc.).  That's in a separate source file under a "services"
+directory.
+
+Whenever another piece of code wants to save data, it finds the application:
+
+TippyTipperApplication appState = ((TippyTipperApplication)this.getApplication());
+
+Then it does things like:
+	appState.service.appendNumberToBillAmount(number);
+        bindData();
+
+(*) Not sure why it's calling bindData().  Look it up?
+	- Ah, it's setting the strings in the text view, based on the updated bill total
+
+Android manifest has TippyTipperApplication in the android:name field of the application xml element.  Perhaps that's how the TippyTipperApplication class is instantiated?  So we have a default Application class, that we can get through the "this" pointer, but TippyTipper extends that class to include a new service to store the tip data.
+
+The application xml element has a couple of different activities under it, including the TippyTipper activity and the Total activity.  But the TippyTipper activity has an intent filter that says it should be launched when the intent passed in is for the main application, so it gets called first.

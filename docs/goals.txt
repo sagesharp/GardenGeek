@@ -92,3 +92,16 @@ Frost warnings
  - suds is a good python client-side soap tool:
 	https://fedorahosted.org/suds/
  - pydoc is like man for python.
+
+Frost alert android app
+-----------------------
+ - parts of the app:
+   - displaying of current (cached) frost alerts
+   - daemon to fetch new minimum temperatures periodically
+   - some how displaying a flashing light, sending an SMS, twitter, or email,
+     etc. when there is a frost alert.
+ - how each part fits into the android design philosophy
+   (http://developer.android.com/guide/topics/fundamentals.html):
+   - user GUI - activity
+   - daemon - service
+   - flashing light frost alert - broadcast receiver using NotificationManager
