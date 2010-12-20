@@ -3,5 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="lib" path="/home/sarah/git/garden/libraries/ksoap2-android-assembly-2.5.2-jar-with-dependencies.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/home/sarah/git/garden/libraries/ksoap2-javadocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -5,4 +5,6 @@
     <string name="currenttemp">Current temperature:</string>
     <string name="forzip">(zipcode </string>
     <string name="forzipending">)</string>
+    <string name="forlatlong">(Latitude/Longitude </string>
+    <string name="forlatlongending">)</string>
 </resources>

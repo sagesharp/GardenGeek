@@ -1,0 +1,11 @@
+The ksoap2-android jar is licensed under the MIT license.  Full text of the
+license and details can be found at:
+
+	http://code.google.com/p/ksoap2-android/
+
+As far as I can tell, the jar distributed by the ksoap2-android project that
+includes all dependencies includes code from several different projects:
+ - xmlpull: http://xmlpull.org/xmlpull-website/index.shtml - in Public Domain
+ - kobjects: http://sourceforge.net/projects/kobjects/ - GPL
+ - kxml: http://sourceforge.net/projects/kxml/ - dual BSD/GPL/Common Public
+   License 1.0
