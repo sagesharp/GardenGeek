@@ -8,7 +8,11 @@ import org.ksoap2.transport.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.text.SimpleDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,9 +20,22 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class FrostAlertService {
+	
+	public static class DateTemp {
+		public final String date;
+		public final String temp;
+		public DateTemp(String date, String temp)
+		{
+			this.date = date;
+			this.temp = temp;
+		}
+	}
 	/* zipcodes can have leading zeros */
 	private Integer zipcode;
-	private Integer minimumTemp;
+	private Integer coldTemp;
+	private List<String> minimumTemps;
+	private String validDateID;
+	private List<String> dayNames;
 	/* NOAA.gov SOAP constants */
 	private static final String ZIP_SOAP_ACTION = "http://www.weather.gov/forecasts/xml/DWMLgen/wsdl/ndfdXML.wsdl#LatLonListZipCode";
 	private static final String ZIP_METHOD_NAME = "LatLonListZipCode";
@@ -37,11 +54,11 @@ public class FrostAlertService {
 	}
 	public Integer getMinimumTemperature()
 	{
-		return minimumTemp;
+		return coldTemp;
 	}
-	public void setMinimumTemperature(Integer minimumTemperature)
+	public void setColdTemperature(Integer minimumTemperature)
 	{
-		minimumTemp = minimumTemperature;
+		coldTemp = minimumTemperature;
 	}
 	
 	private String parseLatLong(String xml)
@@ -59,29 +76,55 @@ public class FrostAlertService {
 			return e.toString();
 		}
 	}
-	private String parseMinimumTemperature(String xml)
+	private List<String> parseMinimumTemperature(Document doc)
 	{
 		int maxItems;
+		List<String> minTemps = new ArrayList<String>();
 		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			InputSource is = new InputSource();
-	        is.setCharacterStream(new StringReader(xml));
-			Document doc = db.parse(is);
-			doc.getDocumentElement().normalize();
 			NodeList tempList = doc.getElementsByTagName("temperature");
 			maxItems = tempList.getLength();
 			for (int i = 0; i < maxItems; i++)
 			{
 				Element item = (Element) tempList.item(i);
+				if (!(item instanceof Element))
+					continue;
 				if (item.getAttribute("type").equals("minimum"))
 				{
-					return item.getElementsByTagName("value").item(0).getFirstChild().getNodeValue();
+					validDateID = item.getAttribute("time-layout");
+					NodeList minimumTemps = item.getElementsByTagName("value");
+					for (int j = 0; j < minimumTemps.getLength(); j++)
+						minTemps.add(minimumTemps.item(j).getFirstChild().getNodeValue());
 				}
 			}
-			return "-400";
+			return minTemps;
 		} catch(Exception e){
-			return e.toString();
+			return Collections.singletonList(e.toString());
+		}
+	}
+	private List<String> parseDays(Document doc)
+	{
+		int maxItems;
+		List<String> dayStrings = new ArrayList<String>();
+		try {
+			NodeList timeLayoutList = doc.getElementsByTagName("time-layout");
+			maxItems = timeLayoutList.getLength();
+			for (int i = 0; i < maxItems; i++)
+			{
+				Element item = (Element) timeLayoutList.item(i);
+				if (!(item instanceof Element))
+					continue;
+				Element itemNested = (Element) item.getElementsByTagName("layout-key").item(0);
+				if (itemNested.getFirstChild().getNodeValue().equals(validDateID)) {
+					NodeList validTimeList = item.getElementsByTagName("start-valid-time");
+					for (int j = 0; j < validTimeList.getLength(); j++) {
+						Element validTime = (Element) validTimeList.item(j);
+						dayStrings.add(validTime.getAttribute("period-name"));
+					}
+				}
+			}
+			return dayStrings;
+		} catch(Exception e){
+			return Collections.singletonList(e.toString());
 		}
 	}
 	public String getLatLong()
@@ -113,7 +156,8 @@ public class FrostAlertService {
 			return "exception";
 		}
 	}
-	public String getTempForNextDay(String latlong, int daysInFuture)
+	/* Gets a list of the minimum temperatures over the next three days */
+	public List<DateTemp> getMinimumTemperatures(String latlong)
 	{
 		try {
 			/* xsd:DateTime format is [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] */
@@ -132,10 +176,10 @@ public class FrostAlertService {
 			request.addProperty("product", "glance");
 			
 			cal = Calendar.getInstance();
-			cal.add(Calendar.DATE, daysInFuture);
 			sdf = new SimpleDateFormat(dateTimeFormat);
 			date = new String(sdf.format(cal.getTime()) + midnight);
 			request.addProperty("startDate", date);
+			cal.add(Calendar.DATE, 3);
 			date = new String(sdf.format(cal.getTime()) + endOfDay);
 			request.addProperty("endDate", date);
 			/* only need mint, so use "glance" instead of "time-series" */
@@ -156,9 +200,20 @@ public class FrostAlertService {
 			 */
 			SoapObject result = (SoapObject) envelope.bodyIn;
 			String xml = result.getProperty(0).toString();
-			return parseMinimumTemperature(xml);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			InputSource is = new InputSource();
+	        is.setCharacterStream(new StringReader(xml));
+			Document doc = db.parse(is);
+			doc.getDocumentElement().normalize();
+			minimumTemps = parseMinimumTemperature(doc);
+			dayNames = parseDays(doc);
+			List<DateTemp> list = new ArrayList<DateTemp>();
+			for (int i = 0; i < minimumTemps.size(); i++)
+				list.add(new DateTemp(dayNames.get(i), minimumTemps.get(i)));
+			return list;
 		} catch (Exception e) {
-			return "exception";
+			return Collections.singletonList(new DateTemp("Never", "-400"));
 		}
 	}
 }
