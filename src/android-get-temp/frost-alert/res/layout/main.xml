@@ -12,4 +12,10 @@
 	android:id="@+id/edittext"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"/>
+<Button
+       android:id="@+id/okbutton"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@id/edittext"
+       android:text="OK" />
 </LinearLayout>

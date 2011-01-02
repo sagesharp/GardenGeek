@@ -26,6 +26,24 @@ public class ImageAdapter extends BaseAdapter {
 	    public long getItemId(int position) {
 	        return 0;
 	    }
+	    
+	    public void setColdPlant(int position) {
+	    	if (position < 0 || position > mThumbIds.length)
+	    		return;
+	    	mThumbIds[position] = R.drawable.cold_plant;
+	    }
+	    
+	    public void setHappyPlant(int position) {
+	    	if (position < 0 || position > mThumbIds.length)
+	    		return;
+	    	mThumbIds[position] = R.drawable.happy_plant;
+	    }
+	    
+	    public void setHailedOnPlant(int position) {
+	    	if (position < 0 || position > mThumbIds.length)
+	    		return;
+	    	mThumbIds[position] = R.drawable.hailed_on_plant;
+	    }
 
 	    // create a new ImageView for each item referenced by the Adapter
 	    public View getView(int position, View convertView, ViewGroup parent) {

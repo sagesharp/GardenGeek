@@ -96,4 +96,12 @@
       android:textSize="15sp"
       android:text=""/>
   </TableRow>
+  <TableRow>
+    <TextView
+      android:layout_span="3"
+      android:id="@+id/xml"
+      android:gravity="center"
+      android:textSize="8sp"
+      android:text=""/>
+  </TableRow>
 </TableLayout>
