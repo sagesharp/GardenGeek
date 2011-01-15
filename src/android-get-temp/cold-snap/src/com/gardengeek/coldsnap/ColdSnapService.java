@@ -1,4 +1,4 @@
-package com.gardengeek.frostalert;
+package com.gardengeek.coldsnap;
 
 import java.io.StringReader;
 
@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class FrostAlertService {
+public class ColdSnapService {
 	
 	public static class DateTemp {
 		public final String date;

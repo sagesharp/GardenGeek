@@ -1,9 +1,9 @@
-package com.gardengeek.frostalert;
+package com.gardengeek.coldsnap;
 
 import java.util.List;
 
-import com.gardengeek.frostalert.R;
-import com.gardengeek.frostalert.FrostAlertApp;
+import com.gardengeek.coldsnap.ColdSnapApp;
+import com.gardengeek.coldsnap.R;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ public class CurrentTemp extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	TextView tempText;
     	GridView gridview;
-    	List<FrostAlertService.DateTemp> dateTemps;
+    	List<ColdSnapService.DateTemp> dateTemps;
 
         super.onCreate(savedInstanceState);
 
@@ -35,7 +35,7 @@ public class CurrentTemp extends Activity {
         
         dateTemps = getDateTemp(latlong);
         while (dateTemps.size() < 3)
-        	dateTemps.add(new FrostAlertService.DateTemp("Never", "-400"));
+        	dateTemps.add(new ColdSnapService.DateTemp("Never", "-400"));
         
         tempText = (TextView) findViewById(R.id.today);
         tempText.setText(dateTemps.get(0).date);
@@ -59,19 +59,19 @@ public class CurrentTemp extends Activity {
     
     private CharSequence getZip()
     {
-    	FrostAlertApp appState = ((FrostAlertApp)getApplication());
+    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
     	String foo = appState.alert.getZipcode();
     	return getString(R.string.forzip).concat(" ").concat(foo).concat(getString(R.string.forzipending));
     }
     private CharSequence getLatLong()
     {
-    	FrostAlertApp appState = ((FrostAlertApp)getApplication());
+    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
     	latlong = appState.alert.getLatLong();
     	return getString(R.string.forlatlong).concat(" ").concat(latlong).concat(getString(R.string.forlatlongending));
     }
-    private List<FrostAlertService.DateTemp> getDateTemp(String latlong)
+    private List<ColdSnapService.DateTemp> getDateTemp(String latlong)
     {
-    	FrostAlertApp appState = ((FrostAlertApp)getApplication());
+    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
     	return appState.alert.getMinimumTemperatures(latlong);
     }
 }

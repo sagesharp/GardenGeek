@@ -1,4 +1,6 @@
-package com.gardengeek.frostalert;
+package com.gardengeek.coldsnap;
+
+import com.gardengeek.coldsnap.R;
 
 import android.view.View;
 import android.view.ViewGroup;

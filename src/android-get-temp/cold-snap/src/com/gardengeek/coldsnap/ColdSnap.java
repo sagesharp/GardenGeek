@@ -1,7 +1,7 @@
-package com.gardengeek.frostalert;
+package com.gardengeek.coldsnap;
 
-import com.gardengeek.frostalert.R;
-import com.gardengeek.frostalert.FrostAlertApp;
+import com.gardengeek.coldsnap.ColdSnapApp;
+import com.gardengeek.coldsnap.R;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.content.Intent;
 
-public class FrostAlert extends Activity {
+public class ColdSnap extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class FrostAlert extends Activity {
     
     private void setZipcode(String zipcode)
     {
-    	FrostAlertApp appState = ((FrostAlertApp)getApplication());
+    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
     	appState.alert.setZipcode(Integer.parseInt(zipcode));
     }
 }
