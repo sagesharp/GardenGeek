@@ -18,11 +18,11 @@ public class ColdSnap extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        final EditText edittext = (EditText) findViewById(R.id.edittext);
+        final EditText zipCodeInput = (EditText) findViewById(R.id.zipcodeinput);
         final Button button = (Button) findViewById(R.id.okbutton);
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	setZipcode(edittext.getText().toString());
+            	setZipcode(zipCodeInput.getText().toString());
             	Intent i = new Intent(getBaseContext(), CurrentTemp.class);
             	startActivity(i);
             }

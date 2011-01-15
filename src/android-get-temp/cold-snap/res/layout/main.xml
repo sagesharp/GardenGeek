@@ -1,21 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<TextView  
+<TextView
+	android:id="@+id/zipcodetext"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="@string/enterzipcode"/>
+    android:text="@string/enterzipcode"
+      android:textSize="16sp"/>
 <EditText
-	android:id="@+id/edittext"
+	android:id="@+id/zipcodeinput"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"/>
+	android:layout_height="wrap_content"
+    android:inputType="number"
+    android:maxLength="5"
+    android:maxLines="1"
+    android:layout_below="@id/zipcodetext"/>
+<TextView
+	android:id="@+id/mintemptext"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/entermintemp"
+    android:layout_below="@id/zipcodeinput"
+      android:textSize="16sp"/>
+<EditText
+	android:id="@+id/mintempinput"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+    android:inputType="numberSigned"
+    android:maxLength="4"
+    android:maxLines="1"
+    android:minWidth="60sp"
+    android:layout_marginRight="6dip"
+    android:layout_below="@id/mintemptext"
+    />
+<TextView
+	android:id="@+id/tempunitstext"
+    android:text="@string/tempunits"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/mintempinput"
+    android:layout_alignBottom="@id/mintempinput"
+    android:layout_centerVertical="true"
+    android:layout_marginBottom="15dip"
+    android:textSize="16sp" />
 <Button
        android:id="@+id/okbutton"
        android:layout_width="fill_parent"
        android:layout_height="wrap_content"
-       android:layout_below="@id/edittext"
-       android:text="OK" />
-</LinearLayout>
+       android:text="OK" 
+       android:layout_below="@id/mintempinput"
+       android:textSize="16sp"/>
+</RelativeLayout>
