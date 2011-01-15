@@ -52,7 +52,7 @@ public class ColdSnapService {
 	{
 		zipcode = zip;
 	}
-	public Integer getMinimumTemperature()
+	public Integer getColdTemperature()
 	{
 		return coldTemp;
 	}

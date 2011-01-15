@@ -18,6 +18,8 @@ public class CurrentTemp extends Activity {
     	GridView gridview;
     	List<ColdSnapService.DateTemp> dateTemps;
     	ColdSnapApp appState;
+    	ImageAdapter imagesview;
+    	Integer coldTemp;
 
         super.onCreate(savedInstanceState);
 
@@ -30,28 +32,42 @@ public class CurrentTemp extends Activity {
         appState = ((ColdSnapApp)getApplication());
         setZipInView(appState);
         setLatLongInView(appState);
+        
+        gridview = (GridView) findViewById(R.id.gridview);
+        imagesview = new ImageAdapter(this);
+        gridview.setAdapter(imagesview);
 
         dateTemps = getDateTemp(appState.alert.getLatLong());
         while (dateTemps.size() < 3)
         	dateTemps.add(new ColdSnapService.DateTemp("Never", "-400"));
-        
+
+        coldTemp = appState.alert.getColdTemperature();
         tempText = (TextView) findViewById(R.id.today);
         tempText.setText(dateTemps.get(0).date);
         tempText = (TextView) findViewById(R.id.todays_temp);
         tempText.setText(dateTemps.get(0).temp + getString(R.string.tempunits));
+        if (Integer.parseInt(dateTemps.get(0).temp) <= coldTemp)
+        	imagesview.setColdPlant(0);
+        else
+        	imagesview.setHappyPlant(0);
         
         tempText = (TextView) findViewById(R.id.tomorrow);
         tempText.setText(dateTemps.get(1).date);
         tempText = (TextView) findViewById(R.id.tomorrows_temp);
         tempText.setText(dateTemps.get(1).temp + getString(R.string.tempunits));
+        if (Integer.parseInt(dateTemps.get(1).temp) <= coldTemp)
+        	imagesview.setColdPlant(1);
+        else
+        	imagesview.setHappyPlant(1);
         
         tempText = (TextView) findViewById(R.id.next_day);
         tempText.setText(dateTemps.get(2).date);
         tempText = (TextView) findViewById(R.id.next_days_temp);
         tempText.setText(dateTemps.get(2).temp + getString(R.string.tempunits));
-
-        gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
+        if (Integer.parseInt(dateTemps.get(2).temp) <= coldTemp)
+        	imagesview.setColdPlant(2);
+        else
+        	imagesview.setHappyPlant(2);
 
     }
     
