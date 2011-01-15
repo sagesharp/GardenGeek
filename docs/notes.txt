@@ -1,0 +1,70 @@
+Eclipse notes
+-------------
+
+Eclipse won't start Android emulator if there isn't enough space on /
+Failed with message:
+"[2011-01-01 09:33:26 - Emulator] NAND: could not write file
+/home/sarah/phone/android-sdk-linux_x86/platforms/android-7/images//system.img,
+Resource temporarily unavailable"
+
+Googled for the error message and found:
+http://code.google.com/p/android/issues/detail?id=6520
+
+sarah@neko:~/git/garden$ df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/Debian-root                               
+                      6.6G  6.2G   58M 100% /         
+tmpfs                 503M   12K  503M   1% /lib/init/rw
+udev                   10M  240K  9.8M   3% /dev        
+tmpfs                 503M   12K  503M   1% /dev/shm    
+/dev/hda1             228M  125M   91M  58% /boot       
+/dev/mapper/Debian-home                                 
+                       83G   76G  2.5G  97% /home
+
+Cleaned out some extra kernels, then it started without any fuss.  Stupid
+useless error messages.
+
+df -hsarah@neko:~/git/garden$ df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/Debian-root
+                      6.6G  6.0G  327M  95% /
+tmpfs                 503M   12K  503M   1% /lib/init/rw
+udev                   10M  240K  9.8M   3% /dev
+tmpfs                 503M   12K  503M   1% /dev/shm
+/dev/hda1             228M   69M  147M  32% /boot
+/dev/mapper/Debian-home
+                       83G   76G  2.5G  97% /home
+
+
+NOAA SOAP interface
+-------------------
+
+At first, I thought I could parse the output returned by NOAA by creating a new
+SoapObject type of the type that the output was supposed to be in, similar to
+what I did for weatherParametersType.  Then I could assign the one property from
+the return time to the newly created SoapObject with addProperty().
+Unfortunately, NOAA doesn't defines their output as "string":
+
+<message name="NDFDgenRequest">
+<part name="latitude" type="xsd:decimal"/>
+<part name="longitude" type="xsd:decimal"/>
+<part name="product" type="xsd:string"/>
+<part name="startTime" type="xsd:dateTime"/>
+<part name="endTime" type="xsd:dateTime"/>
+<part name="weatherParameters" type="tns:weatherParametersType"/>
+</message>
+−
+<message name="NDFDgenResponse">
+<part name="dwmlOut" type="xsd:string"/>
+</message>
+
+Why the fuck didn't they define the output to something like:
+
+<xsd:complexType name="weatherParametersType">
+−
+<xsd:all>
+<xsd:element name="mint" type="xsd:integer"/>
+</xsd:all>
+</xsd:complexType>
+
+Stupid fucking tag soup.
