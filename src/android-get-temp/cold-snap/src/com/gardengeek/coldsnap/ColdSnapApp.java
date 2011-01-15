@@ -6,6 +6,7 @@ import android.app.*;
 
 public class ColdSnapApp extends Application {
 	public ColdSnapService alert = new ColdSnapService();
+	public boolean debug = false;
 
     @Override
     public void onCreate()

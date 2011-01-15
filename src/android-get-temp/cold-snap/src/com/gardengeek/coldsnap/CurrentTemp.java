@@ -12,12 +12,12 @@ import android.widget.TextView;
 import android.widget.GridView;
 
 public class CurrentTemp extends Activity {
-    private String latlong;
     
     public void onCreate(Bundle savedInstanceState) {
     	TextView tempText;
     	GridView gridview;
     	List<ColdSnapService.DateTemp> dateTemps;
+    	ColdSnapApp appState;
 
         super.onCreate(savedInstanceState);
 
@@ -26,14 +26,12 @@ public class CurrentTemp extends Activity {
     	button.setText("OK");
     	
         setContentView(R.layout.temp);
-
-        tempText = (TextView) findViewById(R.id.zipcode);
-        tempText.setText(getZip());
-
-        tempText = (TextView) findViewById(R.id.latlong);
-        tempText.setText(getLatLong());
         
-        dateTemps = getDateTemp(latlong);
+        appState = ((ColdSnapApp)getApplication());
+        setZipInView(appState);
+        setLatLongInView(appState);
+
+        dateTemps = getDateTemp(appState.alert.getLatLong());
         while (dateTemps.size() < 3)
         	dateTemps.add(new ColdSnapService.DateTemp("Never", "-400"));
         
@@ -57,17 +55,26 @@ public class CurrentTemp extends Activity {
 
     }
     
-    private CharSequence getZip()
+    private void setZipInView(ColdSnapApp appState)
     {
-    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
+    	TextView tempText;
+
+    	if (appState.debug == false)
+    		return;
     	String foo = appState.alert.getZipcode();
-    	return getString(R.string.forzip).concat(" ").concat(foo).concat(getString(R.string.forzipending));
+    	tempText = (TextView) findViewById(R.id.zipcode);
+    	tempText.setText(getString(R.string.forzip).concat(" ").concat(foo).concat(getString(R.string.forzipending)));
     }
-    private CharSequence getLatLong()
+    private void setLatLongInView(ColdSnapApp appState)
     {
-    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
+    	TextView tempText;
+    	String latlong;
+
+    	if (appState.debug == false)
+    		return;
     	latlong = appState.alert.getLatLong();
-    	return getString(R.string.forlatlong).concat(" ").concat(latlong).concat(getString(R.string.forlatlongending));
+    	tempText = (TextView) findViewById(R.id.latlong);
+    	tempText.setText(getString(R.string.forlatlong).concat(" ").concat(latlong).concat(getString(R.string.forlatlongending)));
     }
     private List<ColdSnapService.DateTemp> getDateTemp(String latlong)
     {
