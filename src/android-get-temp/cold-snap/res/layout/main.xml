@@ -17,13 +17,22 @@
     android:maxLength="5"
     android:maxLines="1"
     android:layout_below="@id/zipcodetext"/>
+    
 <TextView
-	android:id="@+id/mintemptext"
+	android:id="@+id/configwarnings"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="@string/entermintemp"
-    android:layout_below="@id/zipcodeinput"
-      android:textSize="16sp"/>
+    android:text="@string/configwarnings"
+    android:textSize="16sp"
+    android:layout_below="@id/zipcodeinput"/>
+<ImageView
+	android:id="@+id/coldplantpic"
+	android:src="@drawable/cold_plant"
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="15dip"
+    android:layout_below="@id/configwarnings"
+	/>
 <EditText
 	android:id="@+id/mintempinput"
 	android:layout_width="wrap_content"
@@ -33,18 +42,29 @@
     android:maxLines="1"
     android:minWidth="60sp"
     android:layout_marginRight="6dip"
-    android:layout_below="@id/mintemptext"
+    android:layout_toRightOf="@id/coldplantpic"
+    android:layout_alignBottom="@id/coldplantpic"
     />
 <TextView
 	android:id="@+id/tempunitstext"
     android:text="@string/tempunits"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_toRightOf="@id/mintempinput"
     android:layout_alignBottom="@id/mintempinput"
-    android:layout_centerVertical="true"
-    android:layout_marginBottom="15dip"
+    android:layout_below="@id/configwarnings"
+    android:gravity="left|fill_vertical|center_vertical"
     android:textSize="16sp" />
+<TextView
+	android:id="@+id/mintemptext"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/coldtemp"
+    android:layout_toRightOf="@id/tempunitstext"
+    android:layout_alignBottom="@id/mintempinput"
+    android:layout_below="@id/configwarnings"
+    android:gravity="center|fill_vertical|center_vertical"
+    android:textSize="16sp"/>
 <Button
        android:id="@+id/okbutton"
        android:layout_width="fill_parent"

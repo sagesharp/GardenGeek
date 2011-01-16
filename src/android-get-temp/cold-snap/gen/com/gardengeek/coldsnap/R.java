@@ -17,20 +17,22 @@ public final class R {
         public static final int icon=0x7f020003;
     }
     public static final class id {
-        public static final int gridview=0x7f050009;
-        public static final int latlong=0x7f05000e;
-        public static final int mintempinput=0x7f050003;
-        public static final int mintemptext=0x7f050002;
-        public static final int next_day=0x7f050008;
-        public static final int next_days_temp=0x7f05000c;
-        public static final int okbutton=0x7f050005;
-        public static final int tempunitstext=0x7f050004;
-        public static final int today=0x7f050006;
-        public static final int todays_temp=0x7f05000a;
-        public static final int tomorrow=0x7f050007;
-        public static final int tomorrows_temp=0x7f05000b;
-        public static final int xml=0x7f05000f;
-        public static final int zipcode=0x7f05000d;
+        public static final int coldplantpic=0x7f050003;
+        public static final int configwarnings=0x7f050002;
+        public static final int gridview=0x7f05000b;
+        public static final int latlong=0x7f050010;
+        public static final int mintempinput=0x7f050004;
+        public static final int mintemptext=0x7f050006;
+        public static final int next_day=0x7f05000a;
+        public static final int next_days_temp=0x7f05000e;
+        public static final int okbutton=0x7f050007;
+        public static final int tempunitstext=0x7f050005;
+        public static final int today=0x7f050008;
+        public static final int todays_temp=0x7f05000c;
+        public static final int tomorrow=0x7f050009;
+        public static final int tomorrows_temp=0x7f05000d;
+        public static final int xml=0x7f050011;
+        public static final int zipcode=0x7f05000f;
         public static final int zipcodeinput=0x7f050001;
         public static final int zipcodetext=0x7f050000;
     }
@@ -40,13 +42,14 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
-        public static final int currenttemp=0x7f040003;
-        public static final int entermintemp=0x7f040002;
+        public static final int coldtemp=0x7f040003;
+        public static final int configwarnings=0x7f040002;
+        public static final int currenttemp=0x7f040004;
         public static final int enterzipcode=0x7f040001;
-        public static final int forlatlong=0x7f040006;
-        public static final int forlatlongending=0x7f040007;
-        public static final int forzip=0x7f040004;
-        public static final int forzipending=0x7f040005;
-        public static final int tempunits=0x7f040008;
+        public static final int forlatlong=0x7f040007;
+        public static final int forlatlongending=0x7f040008;
+        public static final int forzip=0x7f040005;
+        public static final int forzipending=0x7f040006;
+        public static final int tempunits=0x7f040009;
     }
 }

@@ -2,7 +2,8 @@
 <resources>
     <string name="app_name">Cold Snap</string>
     <string name="enterzipcode">Enter your zipcode:</string>
-    <string name="entermintemp">Minimum temperature to warn for:</string>
+    <string name="configwarnings">Configure Warnings:</string>
+    <string name="coldtemp">Cold Temperature</string>
     <string name="currenttemp">Minimum temperatures:</string>
     <string name="forzip">(zipcode </string>
     <string name="forzipending">)</string>
