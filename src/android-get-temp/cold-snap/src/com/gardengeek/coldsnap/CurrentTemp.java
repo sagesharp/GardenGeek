@@ -6,15 +6,17 @@ import com.gardengeek.coldsnap.ColdSnapApp;
 import com.gardengeek.coldsnap.R;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.GridView;
 
 public class CurrentTemp extends Activity {
+	private int NUMBERDAYS = 3;
     
     public void onCreate(Bundle savedInstanceState) {
-    	TextView tempText;
     	GridView gridview;
     	List<ColdSnapService.DateTemp> dateTemps;
     	ColdSnapApp appState;
@@ -38,37 +40,41 @@ public class CurrentTemp extends Activity {
         gridview.setAdapter(imagesview);
 
         dateTemps = getDateTemp(appState.alert.getLatLong());
-        while (dateTemps.size() < 3)
+        while (dateTemps.size() < NUMBERDAYS)
         	dateTemps.add(new ColdSnapService.DateTemp("Never", "-400"));
 
         coldTemp = appState.alert.getColdTemperature();
-        tempText = (TextView) findViewById(R.id.today);
-        tempText.setText(dateTemps.get(0).date);
-        tempText = (TextView) findViewById(R.id.todays_temp);
-        tempText.setText(dateTemps.get(0).temp + getString(R.string.tempunits));
-        if (Integer.parseInt(dateTemps.get(0).temp) <= coldTemp)
-        	imagesview.setColdPlant(0);
-        else
-        	imagesview.setHappyPlant(0);
-        
-        tempText = (TextView) findViewById(R.id.tomorrow);
-        tempText.setText(dateTemps.get(1).date);
-        tempText = (TextView) findViewById(R.id.tomorrows_temp);
-        tempText.setText(dateTemps.get(1).temp + getString(R.string.tempunits));
-        if (Integer.parseInt(dateTemps.get(1).temp) <= coldTemp)
-        	imagesview.setColdPlant(1);
-        else
-        	imagesview.setHappyPlant(1);
-        
-        tempText = (TextView) findViewById(R.id.next_day);
-        tempText.setText(dateTemps.get(2).date);
-        tempText = (TextView) findViewById(R.id.next_days_temp);
-        tempText.setText(dateTemps.get(2).temp + getString(R.string.tempunits));
-        if (Integer.parseInt(dateTemps.get(2).temp) <= coldTemp)
-        	imagesview.setColdPlant(2);
-        else
-        	imagesview.setHappyPlant(2);
+        for (int i = 0; i < NUMBERDAYS; i++)
+        	updateDayView(dateTemps, coldTemp, i, imagesview);
+    }
+    
+    private void updateDayView(List<ColdSnapService.DateTemp> dateTemps,
+    		Integer coldTemp, int day, ImageAdapter imagesview)
+    {
+    	int dayIDs[] = {
+    			R.id.today,
+    			R.id.tomorrow,
+    			R.id.next_day,
+    	};
+    	int tempIDs[] = {
+    			R.id.todays_temp,
+    			R.id.tomorrows_temp,
+    			R.id.next_days_temp,
+    	};
+    	TextView tempText;
 
+    	tempText = (TextView) findViewById(dayIDs[day]);
+    	tempText.setText(dateTemps.get(day).date);
+
+    	tempText = (TextView) findViewById(tempIDs[day]);
+    	tempText.setText(dateTemps.get(day).temp + getString(R.string.tempunits));
+    	if (Integer.parseInt(dateTemps.get(day).temp) <= coldTemp) {
+    		tempText.setTextColor(Color.RED);
+    		tempText.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+    		imagesview.setColdPlant(day);
+    	} else {
+    		imagesview.setHappyPlant(day);
+    	}
     }
     
     private void setZipInView(ColdSnapApp appState)
