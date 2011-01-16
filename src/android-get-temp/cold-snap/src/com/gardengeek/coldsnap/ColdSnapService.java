@@ -34,8 +34,8 @@ public class ColdSnapService {
 	private Integer zipcode;
 	private Integer coldTemp;
 	private List<String> minimumTemps;
-	private String validDateID;
 	private List<String> dayNames;
+
 	/* NOAA.gov SOAP constants */
 	private static final String ZIP_SOAP_ACTION = "http://www.weather.gov/forecasts/xml/DWMLgen/wsdl/ndfdXML.wsdl#LatLonListZipCode";
 	private static final String ZIP_METHOD_NAME = "LatLonListZipCode";
@@ -90,39 +90,12 @@ public class ColdSnapService {
 					continue;
 				if (item.getAttribute("type").equals("minimum"))
 				{
-					validDateID = item.getAttribute("time-layout");
 					NodeList minimumTemps = item.getElementsByTagName("value");
 					for (int j = 0; j < minimumTemps.getLength(); j++)
 						minTemps.add(minimumTemps.item(j).getFirstChild().getNodeValue());
 				}
 			}
 			return minTemps;
-		} catch(Exception e){
-			return Collections.singletonList(e.toString());
-		}
-	}
-	private List<String> parseDays(Document doc)
-	{
-		int maxItems;
-		List<String> dayStrings = new ArrayList<String>();
-		try {
-			NodeList timeLayoutList = doc.getElementsByTagName("time-layout");
-			maxItems = timeLayoutList.getLength();
-			for (int i = 0; i < maxItems; i++)
-			{
-				Element item = (Element) timeLayoutList.item(i);
-				if (!(item instanceof Element))
-					continue;
-				Element itemNested = (Element) item.getElementsByTagName("layout-key").item(0);
-				if (itemNested.getFirstChild().getNodeValue().equals(validDateID)) {
-					NodeList validTimeList = item.getElementsByTagName("start-valid-time");
-					for (int j = 0; j < validTimeList.getLength(); j++) {
-						Element validTime = (Element) validTimeList.item(j);
-						dayStrings.add(validTime.getAttribute("period-name"));
-					}
-				}
-			}
-			return dayStrings;
 		} catch(Exception e){
 			return Collections.singletonList(e.toString());
 		}
@@ -162,6 +135,7 @@ public class ColdSnapService {
 		try {
 			/* xsd:DateTime format is [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] */
 			String dateTimeFormat = "yyyy-MM-dd";
+			String dayFormat = "EEE";
 			String midnight = "T00:00:00";
 			String endOfDay = "T23:59:59";
 			String date;
@@ -169,18 +143,28 @@ public class ColdSnapService {
 			SoapObject mint;
 			Calendar cal;
 			SimpleDateFormat sdf;
+			SimpleDateFormat sdfDay;
 			
 			request = new SoapObject(NOAA_NAMESPACE, WEATHER_METHOD_NAME);
 			request.addProperty("latitude", latlong.split(",")[0]);
 			request.addProperty("longitude", latlong.split(",")[1]);
 			request.addProperty("product", "glance");
 			
+			dayNames = new ArrayList<String>();
 			cal = Calendar.getInstance();
 			sdf = new SimpleDateFormat(dateTimeFormat);
+			sdfDay = new SimpleDateFormat(dayFormat);
 			date = new String(sdf.format(cal.getTime()) + midnight);
 			request.addProperty("startDate", date);
-			cal.add(Calendar.DATE, 3);
-			date = new String(sdf.format(cal.getTime()) + endOfDay);
+
+			dayNames.add(new String("Today"));
+			cal.add(Calendar.DATE, 1);
+			dayNames.add(new String(sdfDay.format(cal.getTime())));
+			cal.add(Calendar.DATE, 1);
+			dayNames.add(new String(sdfDay.format(cal.getTime())));
+			cal.add(Calendar.DATE, 1);
+
+			date = new String(sdf.format(cal.getTime()) + midnight);
 			request.addProperty("endDate", date);
 			/* only need mint, so use "glance" instead of "time-series" */
 			
@@ -207,7 +191,6 @@ public class ColdSnapService {
 			Document doc = db.parse(is);
 			doc.getDocumentElement().normalize();
 			minimumTemps = parseMinimumTemperature(doc);
-			dayNames = parseDays(doc);
 			List<DateTemp> list = new ArrayList<DateTemp>();
 			for (int i = 0; i < minimumTemps.size(); i++)
 				list.add(new DateTemp(dayNames.get(i), minimumTemps.get(i)));
