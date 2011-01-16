@@ -6,9 +6,12 @@ import com.gardengeek.coldsnap.ColdSnapApp;
 import com.gardengeek.coldsnap.R;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.GridView;
@@ -17,6 +20,8 @@ public class CurrentTemp extends Activity {
 	private int NUMBERDAYS = 3;
 
     public void onCreate(Bundle savedInstanceState) {
+    	final Button refreshButton;
+    	final Button configButton;
     	ColdSnapApp appState;
 
         super.onCreate(savedInstanceState);
@@ -26,6 +31,20 @@ public class CurrentTemp extends Activity {
     	button.setText("OK");
     	
         setContentView(R.layout.temp);
+        refreshButton = (Button) findViewById(R.id.refreshbutton);
+        configButton = (Button) findViewById(R.id.configbutton);
+        
+        configButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	Intent i = new Intent(getBaseContext(), ColdSnap.class);
+            	startActivity(i);
+            }
+        });
+        refreshButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	updateTemperatures();
+            }
+        });
         
         appState = ((ColdSnapApp)getApplication());
         setZipInView(appState);
