@@ -17,10 +17,22 @@ public class ColdSnap extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+    	ColdSnapApp appState;
+    	Integer minTemp;
+    	String zipcode;
         
         final EditText zipCodeInput = (EditText) findViewById(R.id.zipcodeinput);
         final EditText minTempInput = (EditText) findViewById(R.id.mintempinput);
         final Button button = (Button) findViewById(R.id.okbutton);
+        
+        appState = ((ColdSnapApp)getApplication());
+        minTemp = appState.alert.getColdTemperature();
+        if (minTemp != Integer.MIN_VALUE)
+        	minTempInput.setText(minTemp.toString());
+        zipcode = appState.alert.getZipcode();
+        if (zipcode != null)
+        	zipCodeInput.setText(zipcode);
+        
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
             	setZipcode(zipCodeInput.getText().toString());

@@ -32,8 +32,8 @@ public class ColdSnapService {
 		}
 	}
 	/* zipcodes can have leading zeros */
-	private Integer zipcode;
-	private Integer coldTemp;
+	private Integer zipcode = Integer.MIN_VALUE;
+	private Integer coldTemp = Integer.MIN_VALUE;
 	private List<String> minimumTemps;
 	private List<String> dayNames;
 
@@ -47,6 +47,8 @@ public class ColdSnapService {
 	
 	public String getZipcode()
 	{
+		if (zipcode == Integer.MIN_VALUE)
+			return null;
 		return String.format("%05d", zipcode);
 	}
 	public void setZipcode(Integer zip)
