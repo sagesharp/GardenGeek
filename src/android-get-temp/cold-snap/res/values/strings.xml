@@ -11,4 +11,5 @@
     <string name="forlatlongending">)</string>
     <string name="tempunits">°F</string>
     <string name="refresh">Refresh</string>
+    <string name="config">Setup</string>
 </resources>

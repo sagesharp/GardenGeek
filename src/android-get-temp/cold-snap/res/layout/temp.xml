@@ -104,4 +104,24 @@
       android:textSize="8sp"
       android:text=""/>
   </TableRow>
+  <TableRow>
+	<Button
+       android:id="@+id/refreshbutton"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:gravity="center_horizontal|bottom"
+       android:text="@string/refresh"
+       android:textSize="12sp"
+       android:drawableTop="@drawable/refresh_button"
+       android:layout_column="0"/>
+	<Button
+       android:id="@+id/configbutton"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:gravity="center_horizontal|bottom"
+       android:text="@string/config"
+       android:textSize="12sp"
+       android:drawableTop="@drawable/config_button"
+       android:layout_column="2"/>
+  </TableRow>
 </TableLayout>
