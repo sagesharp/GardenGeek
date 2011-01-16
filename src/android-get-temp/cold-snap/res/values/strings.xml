@@ -10,4 +10,5 @@
     <string name="forlatlong">(Latitude/Longitude </string>
     <string name="forlatlongending">)</string>
     <string name="tempunits">°F</string>
+    <string name="refresh">Refresh</string>
 </resources>

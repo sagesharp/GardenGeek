@@ -9,12 +9,34 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.GridView;
 
 public class CurrentTemp extends Activity {
 	private int NUMBERDAYS = 3;
+	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.tempmenu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case R.id.refreshbutton:
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
     
     public void onCreate(Bundle savedInstanceState) {
     	GridView gridview;

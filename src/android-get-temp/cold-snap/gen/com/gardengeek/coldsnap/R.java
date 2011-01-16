@@ -15,30 +15,35 @@ public final class R {
         public static final int hailed_on_plant=0x7f020001;
         public static final int happy_plant=0x7f020002;
         public static final int icon=0x7f020003;
+        public static final int refresh=0x7f020004;
     }
     public static final class id {
-        public static final int coldplantpic=0x7f050003;
-        public static final int configwarnings=0x7f050002;
-        public static final int gridview=0x7f05000b;
-        public static final int latlong=0x7f050010;
-        public static final int mintempinput=0x7f050004;
-        public static final int mintemptext=0x7f050006;
-        public static final int next_day=0x7f05000a;
-        public static final int next_days_temp=0x7f05000e;
-        public static final int okbutton=0x7f050007;
-        public static final int tempunitstext=0x7f050005;
-        public static final int today=0x7f050008;
-        public static final int todays_temp=0x7f05000c;
-        public static final int tomorrow=0x7f050009;
-        public static final int tomorrows_temp=0x7f05000d;
-        public static final int xml=0x7f050011;
-        public static final int zipcode=0x7f05000f;
-        public static final int zipcodeinput=0x7f050001;
-        public static final int zipcodetext=0x7f050000;
+        public static final int coldplantpic=0x7f060003;
+        public static final int configwarnings=0x7f060002;
+        public static final int gridview=0x7f06000b;
+        public static final int latlong=0x7f060010;
+        public static final int mintempinput=0x7f060004;
+        public static final int mintemptext=0x7f060006;
+        public static final int next_day=0x7f06000a;
+        public static final int next_days_temp=0x7f06000e;
+        public static final int okbutton=0x7f060007;
+        public static final int refreshbutton=0x7f060012;
+        public static final int tempunitstext=0x7f060005;
+        public static final int today=0x7f060008;
+        public static final int todays_temp=0x7f06000c;
+        public static final int tomorrow=0x7f060009;
+        public static final int tomorrows_temp=0x7f06000d;
+        public static final int xml=0x7f060011;
+        public static final int zipcode=0x7f06000f;
+        public static final int zipcodeinput=0x7f060001;
+        public static final int zipcodetext=0x7f060000;
     }
     public static final class layout {
         public static final int main=0x7f030000;
         public static final int temp=0x7f030001;
+    }
+    public static final class menu {
+        public static final int tempmenu=0x7f050000;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
@@ -50,6 +55,7 @@ public final class R {
         public static final int forlatlongending=0x7f040008;
         public static final int forzip=0x7f040005;
         public static final int forzipending=0x7f040006;
+        public static final int refresh=0x7f04000a;
         public static final int tempunits=0x7f040009;
     }
 }
