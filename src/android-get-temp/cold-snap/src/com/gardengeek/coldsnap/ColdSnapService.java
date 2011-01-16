@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class ColdSnapService {
+	private int NUMBERDAYS = 3;
 	
 	public static class DateTemp {
 		public final String date;
@@ -162,9 +163,8 @@ public class ColdSnapService {
 			dayNames.add(new String(sdfDay.format(cal.getTime())));
 			cal.add(Calendar.DATE, 1);
 			dayNames.add(new String(sdfDay.format(cal.getTime())));
-			cal.add(Calendar.DATE, 1);
-
-			date = new String(sdf.format(cal.getTime()) + midnight);
+			
+			date = new String(sdf.format(cal.getTime()) + endOfDay);
 			request.addProperty("endDate", date);
 			/* only need mint, so use "glance" instead of "time-series" */
 			
@@ -192,7 +192,7 @@ public class ColdSnapService {
 			doc.getDocumentElement().normalize();
 			minimumTemps = parseMinimumTemperature(doc);
 			List<DateTemp> list = new ArrayList<DateTemp>();
-			for (int i = 0; i < minimumTemps.size(); i++)
+			for (int i = 0; i < NUMBERDAYS && i < minimumTemps.size(); i++)
 				list.add(new DateTemp(dayNames.get(i), minimumTemps.get(i)));
 			return list;
 		} catch (Exception e) {
