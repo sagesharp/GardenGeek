@@ -34,6 +34,7 @@ public class ColdSnapService {
 	/* zipcodes can have leading zeros */
 	private Integer zipcode = Integer.MIN_VALUE;
 	private Integer coldTemp = Integer.MIN_VALUE;
+	private String latlong;
 	private List<String> minimumTemps;
 	private List<String> dayNames;
 
@@ -103,102 +104,105 @@ public class ColdSnapService {
 			return Collections.singletonList(e.toString());
 		}
 	}
+	public void fetchLatLong() throws Exception
+	{
+		SoapObject request = new SoapObject(NOAA_NAMESPACE, ZIP_METHOD_NAME);
+		request.addProperty("LatLonListZipCodeRequest", this.getZipcode());
+
+		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+		envelope.dotNet = false;
+		envelope.setOutputSoapObject(request);
+		HttpTransportSE androidHttpTransport = new HttpTransportSE(NOAA_URL);
+		androidHttpTransport.call(ZIP_SOAP_ACTION, envelope);
+
+		/*
+		 * envelope.getResult() doesn't work here, although it's in all the tutorials.
+		 * I get a java class exception "java.lang.String".
+		 */
+		SoapObject result = (SoapObject) envelope.bodyIn;
+
+		/*
+		 * Ugh, no idea why this isn't parsing the properties more.
+		 * Why I can't I just say result.getPropery("latLonList")?
+		 * Grab the resulting xml instead, and parse it.
+		 */
+		Object xml = result.getProperty("listLatLonOut");
+		latlong = parseLatLong(xml.toString());
+	}
 	public String getLatLong()
 	{
-		try {
-			SoapObject request = new SoapObject(NOAA_NAMESPACE, ZIP_METHOD_NAME);
-			request.addProperty("LatLonListZipCodeRequest", this.getZipcode());
-
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-			envelope.dotNet = false;
-			envelope.setOutputSoapObject(request);
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(NOAA_URL);
-			androidHttpTransport.call(ZIP_SOAP_ACTION, envelope);
-
-			/*
-			 * envelope.getResult() doesn't work here, although it's in all the tutorials.
-			 * I get a java class exception "java.lang.String".
-			 */
-			SoapObject result = (SoapObject) envelope.bodyIn;
-
-			/*
-			 * Ugh, no idea why this isn't parsing the properties more.
-			 * Why I can't I just say result.getPropery("latLonList")?
-			 * Grab the resulting xml instead, and parse it.
-			 */
-			Object xml = result.getProperty("listLatLonOut");
-			return parseLatLong(xml.toString());
-		} catch (Exception e) {
-			return "exception";
-		}
+		return latlong;
 	}
-	/* Gets a list of the minimum temperatures over the next three days */
-	public List<DateTemp> getMinimumTemperatures(String latlong)
+	/* Gets a list of the minimum temperatures over the next three days.
+	 * If the latitude and longitude have not been fetched, it tries to fetch it.
+	 * If that fails, or getting the minimum temperatures fails,
+	 * then it will throw an exception.
+	 */
+	public List<DateTemp> getMinimumTemperatures() throws Exception
 	{
-		try {
-			/* xsd:DateTime format is [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] */
-			String dateTimeFormat = "yyyy-MM-dd";
-			String dayFormat = "EEE";
-			String midnight = "T00:00:00";
-			String endOfDay = "T23:59:59";
-			String date;
-			SoapObject request;
-			SoapObject mint;
-			Calendar cal;
-			SimpleDateFormat sdf;
-			SimpleDateFormat sdfDay;
-			
-			request = new SoapObject(NOAA_NAMESPACE, WEATHER_METHOD_NAME);
-			request.addProperty("latitude", latlong.split(",")[0]);
-			request.addProperty("longitude", latlong.split(",")[1]);
-			request.addProperty("product", "glance");
-			
-			dayNames = new ArrayList<String>();
-			cal = Calendar.getInstance();
-			sdf = new SimpleDateFormat(dateTimeFormat);
-			sdfDay = new SimpleDateFormat(dayFormat);
-			date = new String(sdf.format(cal.getTime()) + midnight);
-			request.addProperty("startDate", date);
+		/* xsd:DateTime format is [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] */
+		String dateTimeFormat = "yyyy-MM-dd";
+		String dayFormat = "EEE";
+		String midnight = "T00:00:00";
+		String endOfDay = "T23:59:59";
+		String date;
+		SoapObject request;
+		SoapObject mint;
+		Calendar cal;
+		SimpleDateFormat sdf;
+		SimpleDateFormat sdfDay;
 
-			dayNames.add(new String("Today"));
-			cal.add(Calendar.DATE, 1);
-			dayNames.add(new String(sdfDay.format(cal.getTime())));
-			cal.add(Calendar.DATE, 1);
-			dayNames.add(new String(sdfDay.format(cal.getTime())));
-			
-			date = new String(sdf.format(cal.getTime()) + endOfDay);
-			request.addProperty("endDate", date);
-			/* only need mint, so use "glance" instead of "time-series" */
-			
-			mint = new SoapObject(NOAA_NAMESPACE, "weatherParametersType");
-			mint.addProperty("mint", Boolean.TRUE);
-			request.addProperty("weatherParameters", mint);
+		if (latlong == null)
+			fetchLatLong();
+		
+		request = new SoapObject(NOAA_NAMESPACE, WEATHER_METHOD_NAME);
+		request.addProperty("latitude", latlong.split(",")[0]);
+		request.addProperty("longitude", latlong.split(",")[1]);
+		request.addProperty("product", "glance");
 
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-			envelope.dotNet = false;
-			envelope.setOutputSoapObject(request);
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(NOAA_URL);
-			androidHttpTransport.call(WEATHER_SOAP_ACTION, envelope);
+		dayNames = new ArrayList<String>();
+		cal = Calendar.getInstance();
+		sdf = new SimpleDateFormat(dateTimeFormat);
+		sdfDay = new SimpleDateFormat(dayFormat);
+		date = new String(sdf.format(cal.getTime()) + midnight);
+		request.addProperty("startDate", date);
 
-			/*
-			 * Stupid NOAA doesn't explicitly define a format for their output.
-			 * Instead the output is just "string" a.k.a. xml tag soup.
-			 */
-			SoapObject result = (SoapObject) envelope.bodyIn;
-			String xml = result.getProperty(0).toString();
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			InputSource is = new InputSource();
-	        is.setCharacterStream(new StringReader(xml));
-			Document doc = db.parse(is);
-			doc.getDocumentElement().normalize();
-			minimumTemps = parseMinimumTemperature(doc);
-			List<DateTemp> list = new ArrayList<DateTemp>();
-			for (int i = 0; i < NUMBERDAYS && i < minimumTemps.size(); i++)
-				list.add(new DateTemp(dayNames.get(i), minimumTemps.get(i)));
-			return list;
-		} catch (Exception e) {
-			return Collections.singletonList(new DateTemp("Never", "-400"));
-		}
+		dayNames.add(new String("Today"));
+		cal.add(Calendar.DATE, 1);
+		dayNames.add(new String(sdfDay.format(cal.getTime())));
+		cal.add(Calendar.DATE, 1);
+		dayNames.add(new String(sdfDay.format(cal.getTime())));
+
+		date = new String(sdf.format(cal.getTime()) + endOfDay);
+		request.addProperty("endDate", date);
+		/* only need mint, so use "glance" instead of "time-series" */
+
+		mint = new SoapObject(NOAA_NAMESPACE, "weatherParametersType");
+		mint.addProperty("mint", Boolean.TRUE);
+		request.addProperty("weatherParameters", mint);
+
+		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+		envelope.dotNet = false;
+		envelope.setOutputSoapObject(request);
+		HttpTransportSE androidHttpTransport = new HttpTransportSE(NOAA_URL);
+		androidHttpTransport.call(WEATHER_SOAP_ACTION, envelope);
+
+		/*
+		 * Stupid NOAA doesn't explicitly define a format for their output.
+		 * Instead the output is just "string" a.k.a. xml tag soup.
+		 */
+		SoapObject result = (SoapObject) envelope.bodyIn;
+		String xml = result.getProperty(0).toString();
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(xml));
+		Document doc = db.parse(is);
+		doc.getDocumentElement().normalize();
+		minimumTemps = parseMinimumTemperature(doc);
+		List<DateTemp> list = new ArrayList<DateTemp>();
+		for (int i = 0; i < NUMBERDAYS && i < minimumTemps.size(); i++)
+			list.add(new DateTemp(dayNames.get(i), minimumTemps.get(i)));
+		return list;
 	}
 }

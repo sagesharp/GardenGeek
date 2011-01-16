@@ -1,11 +1,14 @@
 package com.gardengeek.coldsnap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gardengeek.coldsnap.ColdSnapApp;
 import com.gardengeek.coldsnap.R;
+import com.gardengeek.coldsnap.ColdSnapService.DateTemp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -15,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 public class CurrentTemp extends Activity {
 	private int NUMBERDAYS = 3;
@@ -65,7 +69,7 @@ public class CurrentTemp extends Activity {
         imagesview = new ImageAdapter(this);
         gridview.setAdapter(imagesview);
 
-        dateTemps = getDateTemp(appState.alert.getLatLong());
+        dateTemps = getDateTemp();
         while (dateTemps.size() < NUMBERDAYS)
         	dateTemps.add(new ColdSnapService.DateTemp("Never", "-400"));
 
@@ -122,11 +126,24 @@ public class CurrentTemp extends Activity {
     		return;
     	latlong = appState.alert.getLatLong();
     	tempText = (TextView) findViewById(R.id.latlong);
+    	/* Internet might be down. */
+    	if (latlong == null) {
+    		tempText.setText(getString(R.string.forlatlong).concat(" ").concat("0,0").concat(getString(R.string.forlatlongending)));
+    		return;
+    	}
     	tempText.setText(getString(R.string.forlatlong).concat(" ").concat(latlong).concat(getString(R.string.forlatlongending)));
     }
-    private List<ColdSnapService.DateTemp> getDateTemp(String latlong)
+    private List<ColdSnapService.DateTemp> getDateTemp()
     {
     	ColdSnapApp appState = ((ColdSnapApp)getApplication());
-    	return appState.alert.getMinimumTemperatures(latlong);
+    	Context context = getApplicationContext();
+
+    	try {
+    		return appState.alert.getMinimumTemperatures();
+    	} catch (Exception e) {
+    		/* Return an empty list, which will be filled in later with bogus values. */
+    		Toast.makeText(context, "Cannot fetch temperatures, data/internet is down", Toast.LENGTH_LONG);
+    		return new ArrayList<DateTemp>();
+    	}
     }
 }

@@ -35,7 +35,10 @@ public class ColdSnap extends Activity {
         
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	setZipcode(zipCodeInput.getText().toString());
+            	ColdSnapApp appState = ((ColdSnapApp)getApplication());
+            	
+            	if (appState.alert.getZipcode() != zipCodeInput.getText().toString())
+            		setZipcode(zipCodeInput.getText().toString());
             	setMinTemp(minTempInput.getText().toString());
             	Intent i = new Intent(getBaseContext(), CurrentTemp.class);
             	startActivity(i);
@@ -47,6 +50,11 @@ public class ColdSnap extends Activity {
     {
     	ColdSnapApp appState = ((ColdSnapApp)getApplication());
     	appState.alert.setZipcode(Integer.parseInt(zipcode));
+    	try {
+    		appState.alert.fetchLatLong();
+    	} catch (Exception e) {
+    		/* Internet's probably down, we'll fetch it later. */
+    	}
     }
     private void setMinTemp(String minTemp)
     {
