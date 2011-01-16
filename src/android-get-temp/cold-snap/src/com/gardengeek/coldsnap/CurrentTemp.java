@@ -20,11 +20,7 @@ public class CurrentTemp extends Activity {
 	private int NUMBERDAYS = 3;
 
     public void onCreate(Bundle savedInstanceState) {
-    	GridView gridview;
-    	List<ColdSnapService.DateTemp> dateTemps;
     	ColdSnapApp appState;
-    	ImageAdapter imagesview;
-    	Integer coldTemp;
 
         super.onCreate(savedInstanceState);
 
@@ -37,7 +33,18 @@ public class CurrentTemp extends Activity {
         appState = ((ColdSnapApp)getApplication());
         setZipInView(appState);
         setLatLongInView(appState);
-        
+        updateTemperatures();
+    }
+    
+    private void updateTemperatures()
+    {
+    	ColdSnapApp appState;
+    	GridView gridview;
+    	List<ColdSnapService.DateTemp> dateTemps;
+    	ImageAdapter imagesview;
+    	Integer coldTemp;
+
+        appState = ((ColdSnapApp)getApplication());
         gridview = (GridView) findViewById(R.id.gridview);
         imagesview = new ImageAdapter(this);
         gridview.setAdapter(imagesview);
