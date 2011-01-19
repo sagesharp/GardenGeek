@@ -9,6 +9,7 @@
 
 const int ledPin =  13;
 const int analogInPin = 0;
+const int pumpVccPin = 3;
 /*
  * Max voltage measured is 5V, or 1023 from ADC.
  * Pick the voltage threshold to be half that.
@@ -21,6 +22,7 @@ unsigned long previousMillis = 0;  // will store last time LED was updated
 void setup() {
   // set the digital pin as output:
   pinMode(ledPin, OUTPUT);
+  pinMode(pumpVccPin, OUTPUT);
   Serial.begin(9600);
 }
 
@@ -37,8 +39,11 @@ void loop()
   
   voltage = analogRead(analogInPin);
   Serial.println(voltage);
-  if (voltage < voltageThreshold)
+  if (voltage < voltageThreshold) {
     digitalWrite(ledPin, HIGH);
-  else
+    digitalWrite(pumpVccPin, HIGH);
+  } else {
+    digitalWrite(pumpVccPin, LOW);
     digitalWrite(ledPin, LOW);
+  }
 }
