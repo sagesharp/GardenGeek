@@ -11,9 +11,9 @@
  * and the time between waterings.
  */
 /* Water for 3 seconds */
-const int wateringMicrosecs = 5 * 1000;
+const unsigned long wateringMicrosecs = 5 * 1000;
 /* Only water every 30 seconds */
-const int delayMicrosecs = 30 * 1000;
+const unsigned long delaySecs = 30;
 
 const int ledPin =  13;
 const int analogInPin = 0;
@@ -32,6 +32,7 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(pumpVccPin, OUTPUT);
   Serial.begin(9600);
+  previousMillis = 0;
 }
 
 /* Turn on the pump for wateringMicrosecs.
@@ -40,10 +41,18 @@ void setup() {
 void waterPlant()
 {
   unsigned long currentMillis;
+  unsigned long secondsLeft;
   
-  currentMillis = millis();  
-  if (currentMillis - previousMillis <= delayMicrosecs)
+  currentMillis = millis();
+  if ((currentMillis - previousMillis) / 1000 <= delaySecs) {
+    secondsLeft = delaySecs - ((currentMillis - previousMillis) / 1000);
+    Serial.print("    count down:  ");
+    Serial.print(secondsLeft);
+    Serial.print(" sec");
+    if (secondsLeft > 1)
+      Serial.print("s");
     return;
+  }
   
   digitalWrite(ledPin, HIGH);
   digitalWrite(pumpVccPin, HIGH);
@@ -61,8 +70,9 @@ void loop()
   int voltage;
   
   voltage = analogRead(analogInPin);
-  Serial.println(voltage);
+  Serial.print(voltage);
   if (voltage < voltageThreshold)
     waterPlant();
+  Serial.println("");
   delay(100);
 }
