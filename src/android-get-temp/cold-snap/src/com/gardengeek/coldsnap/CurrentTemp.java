@@ -129,6 +129,8 @@ public class CurrentTemp extends Activity {
     		tempText.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
     		imagesview.setColdPlant(day);
     	} else {
+    		tempText.setTextColor(Color.WHITE);
+    		tempText.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
     		imagesview.setHappyPlant(day);
     	}
     }
