@@ -26,7 +26,6 @@ public class CurrentTemp extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	final Button refreshButton;
     	final Button configButton;
-    	ColdSnapApp appState;
 
         super.onCreate(savedInstanceState);
 
@@ -40,8 +39,9 @@ public class CurrentTemp extends Activity {
         
         configButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	Intent i = new Intent(getBaseContext(), ColdSnap.class);
+            	Intent i = new Intent(getBaseContext(), ColdSnapSettings.class);
             	startActivity(i);
+            	Toast.makeText(getApplicationContext(), "CurrentTemp return", Toast.LENGTH_LONG);
             }
         });
         refreshButton.setOnClickListener(new OnClickListener() {
@@ -49,7 +49,17 @@ public class CurrentTemp extends Activity {
             	updateTemperatures();
             }
         });
-        
+		Toast.makeText(getApplicationContext(), "CurrentTemp onCreate", Toast.LENGTH_LONG);
+    }
+    
+    public void onStart() {
+		Toast.makeText(getApplicationContext(), "CurrentTemp onStart", Toast.LENGTH_LONG);
+    }
+    
+    public void onResume() {
+    	ColdSnapApp appState;
+
+		Toast.makeText(getApplicationContext(), "CurrentTemp onResume", Toast.LENGTH_LONG);
         appState = ((ColdSnapApp)getApplication());
         setZipInView(appState);
         setLatLongInView(appState);
