@@ -52,7 +52,8 @@ def getTempXml(zipcode):
 	requests = client.factory.create('weatherParametersType')
 	requests.mint = 'TRUE'
 	mintemp = client.service.NDFDgen(latitude, longitude, 'glance',
-			datetime.now(), datetime.now(), requests)
+			datetime.now(), datetime.now() + timedelta(days=3), requests)
+	print mintemp
 	dom2 = parseString(mintemp)
 	temps = dom2.getElementsByTagName("temperature")
 	temperature = findTemp(temps)
