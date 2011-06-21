@@ -37,6 +37,11 @@ public class CurrentTemp extends Activity {
         refreshButton = (Button) findViewById(R.id.refreshbutton);
         configButton = (Button) findViewById(R.id.configbutton);
         
+        if (!isAppSetUp()) {
+        	Intent i = new Intent(getBaseContext(), ColdSnapSettings.class);
+        	startActivity(i);
+        }
+        
         configButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
             	Intent i = new Intent(getBaseContext(), ColdSnapSettings.class);
@@ -51,15 +56,30 @@ public class CurrentTemp extends Activity {
     }
     
     public void onStart() {
+    	super.onStart();
+    	updateTemperatures();
     }
     
     public void onResume() {
     	ColdSnapApp appState;
-
+    	
+    	super.onResume();
         appState = ((ColdSnapApp)getApplication());
         setZipInView(appState);
         setLatLongInView(appState);
         updateTemperatures();
+    }
+    
+    private boolean isAppSetUp()
+    {
+    	ColdSnapApp appState;
+    	String zip;
+    	
+    	appState = ((ColdSnapApp)getApplication());
+    	zip = appState.alert.getZipcode();
+    	if (zip == null)
+    		return false;
+    	return true;
     }
     
     private void updateTemperatures()
