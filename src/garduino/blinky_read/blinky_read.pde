@@ -9,9 +9,12 @@
 
 /* Limitations on the amount of time to water,
  * and the time between waterings.
+ * Updated for Utilitech 1/12 HP pump (15' + 8' hose)
+ * and one small house
+ plant, with the hose primed.
  */
-/* Water for 3 seconds */
-const unsigned long wateringMicrosecs = 5 * 1000;
+const unsigned long wateringMicrosecs = 500;
+
 /* Only water every 30 seconds */
 const unsigned long delaySecs = 30;
 
