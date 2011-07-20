@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cold Snap</string>
+    <string name="app_name">Garden Weather Alert</string>
     <string name="enterzipcode">Enter your zipcode:</string>
     <string name="configwarnings">Configure Warnings:</string>
     <string name="coldtemp">Cold Temperature</string>

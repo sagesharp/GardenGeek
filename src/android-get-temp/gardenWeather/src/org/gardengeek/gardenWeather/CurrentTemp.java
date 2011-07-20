@@ -1,11 +1,12 @@
-package com.gardengeek.coldsnap;
+package org.gardengeek.gardenWeather;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gardengeek.coldsnap.ColdSnapApp;
-import com.gardengeek.coldsnap.R;
-import com.gardengeek.coldsnap.ColdSnapService.DateTemp;
+import org.gardengeek.gardenWeather.GardenWeatherApp;
+import org.gardengeek.gardenWeather.R;
+import org.gardengeek.gardenWeather.GardenWeatherService.DateTemp;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,13 +39,13 @@ public class CurrentTemp extends Activity {
         configButton = (Button) findViewById(R.id.configbutton);
         
         if (!isAppSetUp()) {
-        	Intent i = new Intent(getBaseContext(), ColdSnapSettings.class);
+        	Intent i = new Intent(getBaseContext(), GardenWeatherSettings.class);
         	startActivity(i);
         }
         
         configButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	Intent i = new Intent(getBaseContext(), ColdSnapSettings.class);
+            	Intent i = new Intent(getBaseContext(), GardenWeatherSettings.class);
             	startActivity(i);
             }
         });
@@ -61,10 +62,10 @@ public class CurrentTemp extends Activity {
     }
     
     public void onResume() {
-    	ColdSnapApp appState;
+    	GardenWeatherApp appState;
     	
     	super.onResume();
-        appState = ((ColdSnapApp)getApplication());
+        appState = ((GardenWeatherApp)getApplication());
         setZipInView(appState);
         setLatLongInView(appState);
         updateTemperatures();
@@ -72,10 +73,10 @@ public class CurrentTemp extends Activity {
     
     private boolean isAppSetUp()
     {
-    	ColdSnapApp appState;
+    	GardenWeatherApp appState;
     	String zip;
     	
-    	appState = ((ColdSnapApp)getApplication());
+    	appState = ((GardenWeatherApp)getApplication());
     	zip = appState.alert.getZipcode();
     	if (zip == null)
     		return false;
@@ -84,27 +85,27 @@ public class CurrentTemp extends Activity {
     
     private void updateTemperatures()
     {
-    	ColdSnapApp appState;
+    	GardenWeatherApp appState;
     	GridView gridview;
-    	List<ColdSnapService.DateTemp> dateTemps;
+    	List<GardenWeatherService.DateTemp> dateTemps;
     	ImageAdapter imagesview;
     	Integer coldTemp;
 
-        appState = ((ColdSnapApp)getApplication());
+        appState = ((GardenWeatherApp)getApplication());
         gridview = (GridView) findViewById(R.id.gridview);
         imagesview = new ImageAdapter(this);
         gridview.setAdapter(imagesview);
 
         dateTemps = getDateTemp();
         while (dateTemps.size() < NUMBERDAYS)
-        	dateTemps.add(new ColdSnapService.DateTemp("Never", "-400"));
+        	dateTemps.add(new GardenWeatherService.DateTemp("Never", "-400"));
 
         coldTemp = appState.alert.getColdTemperature();
         for (int i = 0; i < NUMBERDAYS; i++)
         	updateDayView(dateTemps, coldTemp, i, imagesview);
     }
     
-    private void updateDayView(List<ColdSnapService.DateTemp> dateTemps,
+    private void updateDayView(List<GardenWeatherService.DateTemp> dateTemps,
     		Integer coldTemp, int day, ImageAdapter imagesview)
     {
     	int dayIDs[] = {
@@ -135,7 +136,7 @@ public class CurrentTemp extends Activity {
     	}
     }
     
-    private void setZipInView(ColdSnapApp appState)
+    private void setZipInView(GardenWeatherApp appState)
     {
     	TextView tempText;
 
@@ -145,7 +146,7 @@ public class CurrentTemp extends Activity {
     	tempText = (TextView) findViewById(R.id.zipcode);
     	tempText.setText(getString(R.string.forzip).concat(" ").concat(foo).concat(getString(R.string.forzipending)));
     }
-    private void setLatLongInView(ColdSnapApp appState)
+    private void setLatLongInView(GardenWeatherApp appState)
     {
     	TextView tempText;
     	String latlong;
@@ -161,9 +162,9 @@ public class CurrentTemp extends Activity {
     	}
     	tempText.setText(getString(R.string.forlatlong).concat(" ").concat(latlong).concat(getString(R.string.forlatlongending)));
     }
-    private List<ColdSnapService.DateTemp> getDateTemp()
+    private List<GardenWeatherService.DateTemp> getDateTemp()
     {
-    	ColdSnapApp appState = ((ColdSnapApp)getApplication());
+    	GardenWeatherApp appState = ((GardenWeatherApp)getApplication());
     	Context context = getApplicationContext();
 
     	try {

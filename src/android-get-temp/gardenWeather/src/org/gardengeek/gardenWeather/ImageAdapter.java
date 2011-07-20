@@ -1,6 +1,6 @@
-package com.gardengeek.coldsnap;
+package org.gardengeek.gardenWeather;
 
-import com.gardengeek.coldsnap.R;
+import org.gardengeek.gardenWeather.R;
 
 import android.view.View;
 import android.view.ViewGroup;

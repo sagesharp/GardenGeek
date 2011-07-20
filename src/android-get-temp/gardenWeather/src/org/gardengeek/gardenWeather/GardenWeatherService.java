@@ -1,4 +1,4 @@
-package com.gardengeek.coldsnap;
+package org.gardengeek.gardenWeather;
 
 import java.io.StringReader;
 
@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class ColdSnapService {
+public class GardenWeatherService {
 	private int NUMBERDAYS = 3;
 	
 	public static class DateTemp {
