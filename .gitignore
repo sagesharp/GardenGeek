@@ -9,3 +9,6 @@ calendar.txt
 harvest.txt
 plant-calendar.txt
 sprouting.txt
+src/android-get-temp/gardenWeather/bin/
+src/android-get-temp/gardenWeather/gen/
+src/android-get-temp/.metadata/
