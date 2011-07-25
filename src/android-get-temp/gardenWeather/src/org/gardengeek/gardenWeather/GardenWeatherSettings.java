@@ -5,6 +5,7 @@ import org.gardengeek.gardenWeather.R;
 
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.view.View;
@@ -17,21 +18,20 @@ public class GardenWeatherSettings extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-    	GardenWeatherApp appState;
     	Integer minTemp;
-    	String zipcode;
+    	Integer zipcode;
         
         final EditText zipCodeInput = (EditText) findViewById(R.id.zipcodeinput);
         final EditText minTempInput = (EditText) findViewById(R.id.mintempinput);
         final Button button = (Button) findViewById(R.id.okbutton);
         
-        appState = ((GardenWeatherApp)getApplication());
-        minTemp = appState.alert.getColdTemperature();
+        minTemp = getMinTemp();
         if (minTemp != Integer.MIN_VALUE)
         	minTempInput.setText(minTemp.toString());
-        zipcode = appState.alert.getZipcode();
-        if (zipcode != null)
-        	zipCodeInput.setText(zipcode);
+        zipcode = getZipcode();
+        if (zipcode != Integer.MIN_VALUE) {
+        	zipCodeInput.setText(getStringZipcode());
+        }
         
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -45,19 +45,68 @@ public class GardenWeatherSettings extends Activity {
         });
     }
     
+    private String getStringZipcode() {
+    	String zip;
+    	
+    	zip = getZipcode().toString();    	
+    	while (zip.length() < 5)
+    		zip = "0".concat(zip);
+    	return zip;
+    }
+    
+    private Integer getZipcode()
+    {
+    	GardenWeatherApp appState;
+    	SharedPreferences settings;
+    	
+    	appState = ((GardenWeatherApp)getApplication());
+    	settings = getSharedPreferences(appState.PREFS_NAME, 0);
+    	return settings.getInt("zipcode", Integer.MIN_VALUE);
+    }
+    
     private void setZipcode(String zipcode)
     {
-    	GardenWeatherApp appState = ((GardenWeatherApp)getApplication());
+    	GardenWeatherApp appState;
+    	SharedPreferences settings;
+    	SharedPreferences.Editor editor;
+    	
+    	appState = ((GardenWeatherApp)getApplication());
+    	settings = getSharedPreferences(appState.PREFS_NAME, 0);
+    	editor = settings.edit();
+    	editor.putInt("zipcode", Integer.parseInt(zipcode));
+    	editor.commit();
+    	
     	appState.alert.setZipcode(Integer.parseInt(zipcode));
+    	
     	try {
     		appState.alert.fetchLatLong();
     	} catch (Exception e) {
     		/* Internet's probably down, we'll fetch it later. */
     	}
     }
+    
+    private Integer getMinTemp()
+    {
+    	GardenWeatherApp appState;
+    	SharedPreferences settings;
+    	
+    	appState = ((GardenWeatherApp)getApplication());
+    	settings = getSharedPreferences(appState.PREFS_NAME, 0);
+    	return settings.getInt("minTemp", Integer.MIN_VALUE);
+    }
+    
     private void setMinTemp(String minTemp)
     {
-    	GardenWeatherApp appState = ((GardenWeatherApp)getApplication());
+    	GardenWeatherApp appState;
+    	SharedPreferences settings;
+    	SharedPreferences.Editor editor;
+    	
+    	appState = ((GardenWeatherApp)getApplication());
+    	settings = getSharedPreferences(appState.PREFS_NAME, 0);
+    	editor = settings.edit();
+    	editor.putInt("minTemp", Integer.parseInt(minTemp));
+    	editor.commit();
+    	
     	appState.alert.setColdTemperature(Integer.parseInt(minTemp));
     }
 }
