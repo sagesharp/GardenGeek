@@ -98,7 +98,7 @@ public class CurrentTemp extends Activity {
 
         dateTemps = getDateTemp();
         while (dateTemps.size() < NUMBERDAYS)
-        	dateTemps.add(new GardenWeatherService.DateTemp("Never", "-400"));
+        	dateTemps.add(new GardenWeatherService.DateTemp("Unknown", "0"));
 
         coldTemp = appState.alert.getColdTemperature();
         for (int i = 0; i < NUMBERDAYS; i++)
