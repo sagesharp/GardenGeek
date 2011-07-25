@@ -3,11 +3,11 @@
       package="org.gardengeek.gardenWeather"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:name="org.gardengeek.gardenWeather.GardenWeatherApp" android:icon="@drawable/icon" android:label="@string/app_name">
+    <application android:name=".GardenWeatherApp" android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".GardenWeatherSettings"
                   android:label="@string/app_name">
         </activity>
-        <activity android:label="@string/app_name" android:name="org.gardengeek.gardenWeather.CurrentTemp">
+        <activity android:label="@string/app_name" android:name=".CurrentTemp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
